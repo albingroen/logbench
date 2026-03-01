@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import { ProjectHeader } from '@/components/project-header'
+import { Logs } from '@/components/logs'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -13,5 +15,13 @@ function App() {
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
 
-  return data ? <p>{data}</p> : <div>No data</div>
+  return (
+    <div>
+      <ProjectHeader />
+
+      <Logs />
+
+      {/* {data ? <p>{data}</p> : <div>No data</div>} */}
+    </div>
+  )
 }

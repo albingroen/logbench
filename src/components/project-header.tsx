@@ -1,0 +1,83 @@
+import { RiSearchLine } from '@remixicon/react'
+import { useHotkey } from '@tanstack/react-hotkeys'
+import Mark from 'mark.js'
+import { useRef, useState } from 'react'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from './ui/breadcrumb'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from './ui/input-group'
+import { Separator } from './ui/separator'
+import { SidebarTrigger } from './ui/sidebar'
+
+const mark = new Mark('.logs')
+
+export function ProjectHeader() {
+  // Refs
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Keyboard shortcuts
+  useHotkey('Mod+F', (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    searchInputRef.current?.focus()
+  })
+
+  // Local state
+  const [matchCount, setMatchCount] = useState<number>()
+
+  return (
+    <header className="flex h-12 shrink-0 items-center gap-6 border-b px-4">
+      <div className="flex gap-2 items-center">
+        <SidebarTrigger className="-ml-1" />
+        <Separator
+          orientation="vertical"
+          className="mr-2 data-[orientation=vertical]:h-4"
+        />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbPage>Entity resolver</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+      <InputGroup className="flex-1">
+        <InputGroupInput
+          ref={searchInputRef}
+          placeholder="Search logs..."
+          onChange={(e) => {
+            mark.unmark()
+            mark.mark(e.currentTarget.value, {
+              done: (newMatchCount) => {
+                if (e.currentTarget.value) {
+                  setMatchCount(newMatchCount)
+                } else {
+                  setMatchCount(undefined)
+                }
+              },
+            })
+          }}
+        />
+        {typeof matchCount === 'number' && (
+          <InputGroupAddon align="inline-end">
+            <InputGroupText>
+              {matchCount.toLocaleString()} log(s)
+            </InputGroupText>
+          </InputGroupAddon>
+        )}
+        <InputGroupAddon align="inline-end">
+          <RiSearchLine />
+        </InputGroupAddon>
+      </InputGroup>
+    </header>
+  )
+}

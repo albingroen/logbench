@@ -4,6 +4,9 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import appCss from '../styles.css?url'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { AppSidebar } from '@/components/app-sidebar/index'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -40,7 +43,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          {children}
+          <TooltipProvider>
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarInset>{children}</SidebarInset>
+            </SidebarProvider>
+          </TooltipProvider>
         </QueryClientProvider>
         <TanStackDevtools
           config={{
