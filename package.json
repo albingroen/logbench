@@ -12,16 +12,16 @@
     "check": "prettier --write . && eslint --fix"
   },
   "dependencies": {
-    "@base-ui/react": "^1.2.0",
     "@fontsource-variable/inter": "^5.2.8",
     "@remixicon/react": "^4.9.0",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-devtools": "^0.7.0",
+    "@tanstack/react-query": "^5.90.21",
     "@tanstack/react-router": "^1.132.0",
     "@tanstack/react-router-devtools": "^1.132.0",
-    "@tanstack/react-router-ssr-query": "^1.131.7",
     "@tanstack/react-start": "^1.132.0",
     "@tanstack/router-plugin": "^1.132.0",
+    "axios": "^1.13.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "nitro": "latest",
