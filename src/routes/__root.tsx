@@ -7,6 +7,7 @@ import appCss from '../styles.css?url'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar/index'
+import { Toaster } from '@/components/ui/sonner'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -43,10 +44,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
+          <TooltipProvider delayDuration={700}>
             <SidebarProvider>
               <AppSidebar />
               <SidebarInset>{children}</SidebarInset>
+              <Toaster closeButton={false} position="bottom-right" />
             </SidebarProvider>
           </TooltipProvider>
         </QueryClientProvider>

@@ -1,3 +1,3 @@
 export function Logo() {
-  return <p className="text-base font-medium tracking-tight">Logbench</p>
+  return <p className="font-serif text-lg font-medium">Logbench</p>
 }

@@ -1,7 +1,10 @@
-import { RiSearchLine } from '@remixicon/react'
+import { RiClipboardLine, RiMoreLine, RiSearchLine } from '@remixicon/react'
 import { useHotkey } from '@tanstack/react-hotkeys'
 import Mark from 'mark.js'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import { toast } from 'sonner'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,10 +19,31 @@ import {
 } from './ui/input-group'
 import { Separator } from './ui/separator'
 import { SidebarTrigger } from './ui/sidebar'
-
-const mark = new Mark('.logs')
+import { Button } from './ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu'
+import type { Project } from 'generated/prisma/browser'
+import { Route } from '@/routes/projects.$projectId.route'
+import { copyToClipboard } from '@/lib/clipboard'
 
 export function ProjectHeader() {
+  // Helpers
+  const mark = useMemo(() => new Mark('.logs'), [])
+
+  // Router state
+  const { projectId } = Route.useParams()
+
+  // Server state
+  const { data: project } = useQuery({
+    queryKey: ['projects', projectId],
+    queryFn: () =>
+      axios.get<Project>(`/api/projects/${projectId}`).then((res) => res.data),
+  })
+
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -35,7 +59,7 @@ export function ProjectHeader() {
   const [matchCount, setMatchCount] = useState<number>()
 
   return (
-    <header className="flex h-12 shrink-0 items-center gap-6 border-b px-4">
+    <header className="flex h-12 shrink-0 items-center gap-6 border-b px-4 sticky top-0 bg-background z-10">
       <div className="flex gap-2 items-center">
         <SidebarTrigger className="-ml-1" />
         <Separator
@@ -45,39 +69,73 @@ export function ProjectHeader() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbPage>Entity resolver</BreadcrumbPage>
+              <BreadcrumbPage>{project?.title}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <InputGroup className="flex-1">
-        <InputGroupInput
-          ref={searchInputRef}
-          placeholder="Search logs..."
-          onChange={(e) => {
-            mark.unmark()
-            mark.mark(e.currentTarget.value, {
-              done: (newMatchCount) => {
-                if (e.currentTarget.value) {
-                  setMatchCount(newMatchCount)
-                } else {
-                  setMatchCount(undefined)
-                }
-              },
-            })
-          }}
-        />
-        {typeof matchCount === 'number' && (
+      <div className="flex-1 flex gap-2.5">
+        <InputGroup className="flex-1">
+          <InputGroupInput
+            ref={searchInputRef}
+            placeholder="Search logs..."
+            onChange={(e) => {
+              mark.unmark()
+              mark.mark(e.currentTarget.value, {
+                done: (newMatchCount) => {
+                  if (e.currentTarget.value) {
+                    setMatchCount(newMatchCount)
+                  } else {
+                    setMatchCount(undefined)
+                  }
+                },
+              })
+            }}
+          />
+          {typeof matchCount === 'number' && (
+            <InputGroupAddon align="inline-end">
+              <InputGroupText>
+                {matchCount.toLocaleString()} result(s)
+              </InputGroupText>
+            </InputGroupAddon>
+          )}
           <InputGroupAddon align="inline-end">
-            <InputGroupText>
-              {matchCount.toLocaleString()} log(s)
-            </InputGroupText>
+            <RiSearchLine />
           </InputGroupAddon>
-        )}
-        <InputGroupAddon align="inline-end">
-          <RiSearchLine />
-        </InputGroupAddon>
-      </InputGroup>
+        </InputGroup>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="icon" variant="ghost">
+              <RiMoreLine />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="min-w-48" align="end">
+            <DropdownMenuItem
+              onSelect={() => {
+                toast.promise(
+                  axios.get('/api/ip').then((res) => {
+                    const url = `http://${res.data}:3000/api/projects/${projectId}/logs/ingest`
+
+                    return copyToClipboard(url)
+                  }),
+                  {
+                    loading: 'Loading...',
+                    success: `POST URL copied to clipboard`,
+                    error: (err) => {
+                      console.log(err)
+                      return 'Failed to copy POST URL to clipboard'
+                    },
+                  },
+                )
+              }}
+            >
+              <RiClipboardLine />
+              Copy POST URL
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   )
 }

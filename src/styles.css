@@ -123,10 +123,10 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply font-sans bg-background text-foreground antialiased;
+    @apply font-sans bg-background text-foreground antialiased overscroll-none;
   }
   html {
-    @apply font-sans;
+    @apply font-sans overscroll-none;
   }
 }
 

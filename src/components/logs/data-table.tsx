@@ -1,12 +1,12 @@
-'use client'
-
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
+import type { Log } from 'generated/prisma/browser'
 import {
   Table,
   TableBody,
@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { cn } from '@/lib/utils'
 
 interface DataTableProps<TData, TValue> {
   columns: Array<ColumnDef<TData, TValue>>
@@ -24,7 +25,12 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData & Log, TValue>) {
+  // Router state
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  // Local state
   const table = useReactTable({
     data,
     columns,
@@ -32,63 +38,80 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="overflow-hidden border-b">
-      <Table className="table-fixed">
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header, i) => {
-                return (
-                  <TableHead
-                    key={header.id}
-                    className={
-                      i === 0 ? 'w-44' : i === 1 || i === 2 ? 'w-14' : 'w-auto'
-                    }
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                )
-              })}
+    <Table className="table-fixed">
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map((header, i) => {
+              return (
+                <TableHead
+                  key={header.id}
+                  className={cn(
+                    ['w-44 text-muted-foreground', 'w-56', 'w-20', 'w-auto'][i],
+                  )}
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                </TableHead>
+              )
+            })}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody className="logs">
+        {table.getRowModel().rows.length ? (
+          table.getRowModel().rows.map((row) => (
+            <TableRow
+              key={row.id}
+              data-state={
+                location.pathname.includes(row.original.id) ||
+                row.getIsSelected()
+                  ? 'selected'
+                  : undefined
+              }
+              className="cursor-pointer"
+              onClick={() => {
+                if (!row.original.projectId) {
+                  return
+                }
+
+                navigate({
+                  to: '/projects/$projectId/logs/$logId',
+                  params: {
+                    projectId: row.original.projectId,
+                    logId: row.original.id,
+                  },
+                  resetScroll: false,
+                })
+              }}
+            >
+              {row.getVisibleCells().map((cell, i) => (
+                <TableCell
+                  key={cell.id}
+                  className={
+                    ['w-44 text-muted-foreground', 'w-56', 'w-20', 'w-auto'][i]
+                  }
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
             </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody className="logs">
-          {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-              >
-                {row.getVisibleCells().map((cell, i) => (
-                  <TableCell
-                    key={cell.id}
-                    className={
-                      i === 0
-                        ? 'w-44 text-muted-foreground'
-                        : i === 1 || i === 2
-                          ? 'w-14'
-                          : 'w-auto'
-                    }
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell
+              colSpan={columns.length}
+              className="align-middle h-24 text-center"
+            >
+              No logs yet
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   )
 }

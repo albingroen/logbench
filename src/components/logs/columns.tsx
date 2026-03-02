@@ -1,13 +1,6 @@
 import { format } from 'date-fns'
 import type { ColumnDef } from '@tanstack/react-table'
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Log = {
-  id: string
-  value: unknown
-  createdAt: Date
-}
+import type { Log } from 'generated/prisma/browser'
 
 export const columns: Array<ColumnDef<Log>> = [
   {
@@ -26,12 +19,18 @@ export const columns: Array<ColumnDef<Log>> = [
   },
   {
     header: 'Type',
-    cell: () => {
-      return <span className="text-blue-400 uppercase">Info</span>
+    accessorKey: 'level',
+    cell: ({ row }) => {
+      return (
+        <span className="text-blue-400 uppercase">{row.getValue('level')}</span>
+      )
     },
   },
   {
-    accessorKey: 'value',
+    accessorKey: 'content',
     header: 'Value',
+    cell: ({ row }) => {
+      return JSON.stringify(row.getValue('content'))
+    },
   },
 ]
