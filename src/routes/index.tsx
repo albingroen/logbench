@@ -3,17 +3,19 @@ import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { ProjectHeader } from '@/components/project-header'
 import { Logs } from '@/components/logs'
+import { createServerFn } from '@tanstack/react-start'
+import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/')({ component: App })
 
 function App() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['api'],
-    queryFn: () => axios.get('/api').then((res) => res.data),
-  })
+  // const { data, isLoading, error } = useQuery({
+  //   queryKey: ['api'],
+  //   queryFn: () => axios.get('/api').then((res) => res.data),
+  // })
 
-  if (isLoading) return <div>Loading...</div>
-  if (error) return <div>Error: {error.message}</div>
+  // if (isLoading) return <div>Loading...</div>
+  // if (error) return <div>Error: {error.message}</div>
 
   return (
     <div>
