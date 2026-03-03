@@ -67,13 +67,8 @@ export function DataTable<TData, TValue>({
           table.getRowModel().rows.map((row) => (
             <TableRow
               key={row.id}
-              data-state={
-                location.pathname.includes(row.original.id) ||
-                row.getIsSelected()
-                  ? 'selected'
-                  : undefined
-              }
-              className="cursor-pointer"
+              data-state={row.getIsSelected() ? 'selected' : undefined}
+              data-active={location.pathname.includes(row.original.id)}
               onClick={() => {
                 if (!row.original.projectId) {
                   return

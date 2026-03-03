@@ -1,22 +1,19 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { prisma } from '@/lib/prisma'
 
-export const Route = createFileRoute('/api/projects/$projectId/logs')({
+export const Route = createFileRoute('/api/projects/$projectId/logs/$logId')({
   server: {
     handlers: {
       GET: async ({ params }) => {
-        const { projectId } = params
+        const { logId } = params
 
-        const logs = await prisma.log.findMany({
+        const log = await prisma.log.findUnique({
           where: {
-            projectId,
-          },
-          orderBy: {
-            createdAt: 'desc',
+            id: logId,
           },
         })
 
-        return new Response(JSON.stringify(logs), {
+        return new Response(JSON.stringify(log), {
           headers: {
             'Content-Type': 'application/json',
           },

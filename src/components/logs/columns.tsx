@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { LogContentInline } from '../log-content'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { Log } from 'generated/prisma/browser'
 
@@ -22,7 +23,9 @@ export const columns: Array<ColumnDef<Log>> = [
     accessorKey: 'level',
     cell: ({ row }) => {
       return (
-        <span className="text-blue-400 uppercase">{row.getValue('level')}</span>
+        <span className="text-muted-foreground uppercase">
+          {row.getValue('level')}
+        </span>
       )
     },
   },
@@ -30,7 +33,7 @@ export const columns: Array<ColumnDef<Log>> = [
     accessorKey: 'content',
     header: 'Value',
     cell: ({ row }) => {
-      return JSON.stringify(row.getValue('content'))
+      return <LogContentInline content={row.getValue('content')} />
     },
   },
 ]

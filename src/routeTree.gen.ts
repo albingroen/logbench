@@ -17,6 +17,7 @@ import { Route as ApiProjectsProjectIdRouteImport } from './routes/api.projects.
 import { Route as ProjectsProjectIdLogsLogIdRouteImport } from './routes/projects.$projectId.logs.$logId'
 import { Route as ApiProjectsProjectIdLogsRouteImport } from './routes/api.projects.$projectId.logs'
 import { Route as ApiProjectsProjectIdLogsIngestRouteImport } from './routes/api.projects.$projectId.logs.ingest'
+import { Route as ApiProjectsProjectIdLogsLogIdRouteImport } from './routes/api.projects.$projectId.logs.$logId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -61,6 +62,12 @@ const ApiProjectsProjectIdLogsIngestRoute =
     path: '/ingest',
     getParentRoute: () => ApiProjectsProjectIdLogsRoute,
   } as any)
+const ApiProjectsProjectIdLogsLogIdRoute =
+  ApiProjectsProjectIdLogsLogIdRouteImport.update({
+    id: '/$logId',
+    path: '/$logId',
+    getParentRoute: () => ApiProjectsProjectIdLogsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
   '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
+  '/api/projects/$projectId/logs/$logId': typeof ApiProjectsProjectIdLogsLogIdRoute
   '/api/projects/$projectId/logs/ingest': typeof ApiProjectsProjectIdLogsIngestRoute
 }
 export interface FileRoutesByTo {
@@ -80,6 +88,7 @@ export interface FileRoutesByTo {
   '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
   '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
+  '/api/projects/$projectId/logs/$logId': typeof ApiProjectsProjectIdLogsLogIdRoute
   '/api/projects/$projectId/logs/ingest': typeof ApiProjectsProjectIdLogsIngestRoute
 }
 export interface FileRoutesById {
@@ -91,6 +100,7 @@ export interface FileRoutesById {
   '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
   '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
+  '/api/projects/$projectId/logs/$logId': typeof ApiProjectsProjectIdLogsLogIdRoute
   '/api/projects/$projectId/logs/ingest': typeof ApiProjectsProjectIdLogsIngestRoute
 }
 export interface FileRouteTypes {
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
     | '/api/projects/$projectId'
     | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
+    | '/api/projects/$projectId/logs/$logId'
     | '/api/projects/$projectId/logs/ingest'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '/api/projects/$projectId'
     | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
+    | '/api/projects/$projectId/logs/$logId'
     | '/api/projects/$projectId/logs/ingest'
   id:
     | '__root__'
@@ -123,6 +135,7 @@ export interface FileRouteTypes {
     | '/api/projects/$projectId'
     | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
+    | '/api/projects/$projectId/logs/$logId'
     | '/api/projects/$projectId/logs/ingest'
   fileRoutesById: FileRoutesById
 }
@@ -191,6 +204,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProjectsProjectIdLogsIngestRouteImport
       parentRoute: typeof ApiProjectsProjectIdLogsRoute
     }
+    '/api/projects/$projectId/logs/$logId': {
+      id: '/api/projects/$projectId/logs/$logId'
+      path: '/$logId'
+      fullPath: '/api/projects/$projectId/logs/$logId'
+      preLoaderRoute: typeof ApiProjectsProjectIdLogsLogIdRouteImport
+      parentRoute: typeof ApiProjectsProjectIdLogsRoute
+    }
   }
 }
 
@@ -209,11 +229,13 @@ const ProjectsProjectIdRouteRouteWithChildren =
   )
 
 interface ApiProjectsProjectIdLogsRouteChildren {
+  ApiProjectsProjectIdLogsLogIdRoute: typeof ApiProjectsProjectIdLogsLogIdRoute
   ApiProjectsProjectIdLogsIngestRoute: typeof ApiProjectsProjectIdLogsIngestRoute
 }
 
 const ApiProjectsProjectIdLogsRouteChildren: ApiProjectsProjectIdLogsRouteChildren =
   {
+    ApiProjectsProjectIdLogsLogIdRoute: ApiProjectsProjectIdLogsLogIdRoute,
     ApiProjectsProjectIdLogsIngestRoute: ApiProjectsProjectIdLogsIngestRoute,
   }
 

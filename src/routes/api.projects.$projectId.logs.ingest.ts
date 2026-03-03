@@ -84,9 +84,13 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
           })
         }
 
+        console.log(parsed.data.content)
+
         const log = await prisma.log.create({
           data: {
-            content: parsed.data.content,
+            content: {
+              value: parsed.data.content,
+            },
             project: {
               connect: {
                 id: params.projectId,
@@ -102,6 +106,16 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': '*',
+          },
+        })
+      },
+      OPTIONS: () => {
+        return new Response(null, {
+          status: 204,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': '*',
           },
         })
       },

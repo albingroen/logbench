@@ -48,7 +48,7 @@ function SheetContent({
         )}
         {...props}
       >
-        <div className="bg-card size-full border rounded-xl shadow-2xl dark:shadow-black relative">
+        <div className="bg-card size-full border rounded-xl shadow-2xl dark:shadow-black relative flex flex-col overflow-y-auto overscroll-none">
           {children}
           {showCloseButton && (
             <SheetPrimitive.Close data-slot="sheet-close" asChild>
@@ -72,7 +72,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="sheet-header"
-      className={cn('flex flex-col gap-1.5 p-6', className)}
+      className={cn('flex flex-col gap-1.5 px-6 pt-6 pb-4', className)}
       {...props}
     />
   )
@@ -95,7 +95,7 @@ function SheetTitle({
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
-      className={cn('text-foreground text-sm font-medium', className)}
+      className={cn('text-foreground text-base font-medium', className)}
       {...props}
     />
   )
@@ -108,7 +108,7 @@ function SheetDescription({
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"
-      className={cn('text-muted-foreground text-xs/relaxed', className)}
+      className={cn('text-muted-foreground text-sm/relaxed', className)}
       {...props}
     />
   )
