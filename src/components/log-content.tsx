@@ -1,47 +1,54 @@
 import { TreeView, VisualJson } from '@visual-json/react'
-import type { Log } from 'generated/prisma/browser'
+import { LogLevel, type Log } from 'generated/prisma/browser'
 import type { JsonObject } from '@visual-json/core'
 import { renderLogContent } from '@/lib/log'
-import { isObject } from '@/lib/utils'
+import { cn, isObject } from '@/lib/utils'
+import { LogLevelMetadata } from './log-level'
 
 type LogContentProps = {
   content: Log['content']
+  level: Log['level']
 }
 
-export function LogContentInline({ content: rawContent }: LogContentProps) {
+export function LogContentInline({
+  content: rawContent,
+  level,
+}: LogContentProps) {
   const content = renderLogContent(rawContent)
 
-  if (!content) {
-    return <span className="text-muted-foreground">undefined</span>
-  }
-
-  return <span className="line-clamp-10">{content}</span>
+  return (
+    <span
+      className={cn(
+        'line-clamp-10',
+        {
+          [LogLevel.ERROR]: 'text-destructive',
+          [LogLevel.WARNING]: 'text-warning',
+          [LogLevel.INFO]: 'text-muted-foreground',
+        }[level],
+      )}
+    >
+      {content}
+    </span>
+  )
 }
 
-export function LogContentBlock({ content: rawContent }: LogContentProps) {
+export function LogContentBlock({
+  content: rawContent,
+  level,
+}: LogContentProps) {
   const content = renderLogContent(rawContent, false)
 
   if (isObject(content)) {
     return (
-      <div>
-        <VisualJson value={content as JsonObject}>
-          <TreeView showCounts showValues />
-        </VisualJson>
-      </div>
+      <VisualJson value={content as JsonObject}>
+        <TreeView showCounts showValues className="bg-muted/50!" />
+      </VisualJson>
     )
   }
 
   return (
-    <pre className="px-6 leading-relaxed text-sm">
-      {content ? (
-        typeof content === 'string' ? (
-          content
-        ) : (
-          JSON.stringify(content)
-        )
-      ) : (
-        <span className="text-muted-foreground">undefined</span>
-      )}
+    <pre className="bg-muted/50 py-4 px-6 text-sm/relaxed text-balance break-all">
+      {typeof content === 'string' ? content : JSON.stringify(content)}
     </pre>
   )
 }

@@ -1,5 +1,6 @@
 import { format } from 'date-fns'
 import { LogContentInline } from '../log-content'
+import { LogLevelBadge } from '../log-level'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { Log } from 'generated/prisma/browser'
 
@@ -22,18 +23,19 @@ export const columns: Array<ColumnDef<Log>> = [
     header: 'Type',
     accessorKey: 'level',
     cell: ({ row }) => {
-      return (
-        <span className="text-muted-foreground uppercase">
-          {row.getValue('level')}
-        </span>
-      )
+      return <LogLevelBadge level={row.getValue('level')} />
     },
   },
   {
     accessorKey: 'content',
     header: 'Value',
     cell: ({ row }) => {
-      return <LogContentInline content={row.getValue('content')} />
+      return (
+        <LogContentInline
+          level={row.getValue('level')}
+          content={row.getValue('content')}
+        />
+      )
     },
   },
 ]

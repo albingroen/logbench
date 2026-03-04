@@ -48,7 +48,7 @@ function SheetContent({
         )}
         {...props}
       >
-        <div className="bg-card size-full border rounded-xl shadow-2xl dark:shadow-black relative flex flex-col overflow-y-auto overscroll-none">
+        <div className="bg-card size-full border rounded-xl shadow-2xl dark:shadow-black relative flex flex-col">
           {children}
           {showCloseButton && (
             <SheetPrimitive.Close data-slot="sheet-close" asChild>

@@ -1,4 +1,5 @@
 import type { Log } from 'generated/prisma/browser'
+import { isObject } from './utils'
 
 export function renderLogContent(
   content: Log['content'],
@@ -6,5 +7,11 @@ export function renderLogContent(
 ) {
   const { value } = content as { value: any }
 
-  return value ? (parseToString ? JSON.stringify(value) : value) : undefined
+  return typeof value === 'undefined'
+    ? 'undefined'
+    : parseToString
+      ? isObject(value)
+        ? JSON.stringify(value)
+        : value
+      : value
 }
