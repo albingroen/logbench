@@ -115,7 +115,7 @@ export function ProjectHeader() {
               onSelect={() => {
                 toast.promise(
                   axios.get('/api/ip').then((res) => {
-                    const url = `http://${res.data}:1447/api/projects/${projectId}/logs/ingest`
+                    const url = `http://${res.data}:${window.location.port}/api/projects/${projectId}/logs/ingest`
 
                     return copyToClipboard(url)
                   }),

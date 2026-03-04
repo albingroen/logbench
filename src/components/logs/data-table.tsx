@@ -63,49 +63,38 @@ export function DataTable<TData, TValue>({
         ))}
       </TableHeader>
       <TableBody className="logs">
-        {table.getRowModel().rows.length ? (
-          table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              data-state={row.getIsSelected() ? 'selected' : undefined}
-              data-active={location.pathname.includes(row.original.id)}
-              onClick={() => {
-                if (!row.original.projectId) {
-                  return
-                }
+        {table.getRowModel().rows.map((row) => (
+          <TableRow
+            key={row.id}
+            data-state={row.getIsSelected() ? 'selected' : undefined}
+            data-active={location.pathname.includes(row.original.id)}
+            onClick={() => {
+              if (!row.original.projectId) {
+                return
+              }
 
-                navigate({
-                  to: '/projects/$projectId/logs/$logId',
-                  params: {
-                    projectId: row.original.projectId,
-                    logId: row.original.id,
-                  },
-                  resetScroll: false,
-                })
-              }}
-            >
-              {row.getVisibleCells().map((cell, i) => (
-                <TableCell
-                  key={cell.id}
-                  className={
-                    ['w-44 text-muted-foreground', 'w-56', 'w-20', 'w-auto'][i]
-                  }
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell
-              colSpan={columns.length}
-              className="align-middle h-24 text-center"
-            >
-              No logs yet
-            </TableCell>
+              navigate({
+                to: '/projects/$projectId/logs/$logId',
+                params: {
+                  projectId: row.original.projectId,
+                  logId: row.original.id,
+                },
+                resetScroll: false,
+              })
+            }}
+          >
+            {row.getVisibleCells().map((cell, i) => (
+              <TableCell
+                key={cell.id}
+                className={
+                  ['w-44 text-muted-foreground', 'w-56', 'w-20', 'w-auto'][i]
+                }
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
           </TableRow>
-        )}
+        ))}
       </TableBody>
     </Table>
   )
