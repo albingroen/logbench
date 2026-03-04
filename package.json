@@ -1,6 +1,8 @@
 {
   "name": "logbench",
-  "private": true,
+  "version": "0.1.0",
+  "author": "Albin Groen",
+  "description": " A local log drain for people tired of console.log",
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 1447",

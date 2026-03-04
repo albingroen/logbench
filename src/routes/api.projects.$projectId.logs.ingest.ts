@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 
 const bodySchema = z.object({
   content: z.any(),
+  level: z.enum(['INFO', 'WARNING', 'ERROR']).optional(),
 })
 
 type Client = ReadableStreamDefaultController<Uint8Array>
@@ -84,13 +85,12 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
           })
         }
 
-        console.log(parsed.data.content)
-
         const log = await prisma.log.create({
           data: {
             content: {
               value: parsed.data.content,
             },
+            level: parsed.data.level,
             project: {
               connect: {
                 id: params.projectId,

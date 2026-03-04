@@ -122,10 +122,7 @@ export function ProjectHeader() {
                   {
                     loading: 'Loading...',
                     success: `POST URL copied to clipboard`,
-                    error: (err) => {
-                      console.log(err)
-                      return 'Failed to copy POST URL to clipboard'
-                    },
+                    error: 'Failed to copy POST URL to clipboard',
                   },
                 )
               }}
