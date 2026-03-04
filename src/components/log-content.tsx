@@ -1,9 +1,9 @@
 import { TreeView, VisualJson } from '@visual-json/react'
-import { LogLevel, type Log } from 'generated/prisma/browser'
+import { LogLevel } from 'generated/prisma/browser'
+import type { Log } from 'generated/prisma/browser'
 import type { JsonObject } from '@visual-json/core'
 import { renderLogContent } from '@/lib/log'
 import { cn, isObject } from '@/lib/utils'
-import { LogLevelMetadata } from './log-level'
 
 type LogContentProps = {
   content: Log['content']
@@ -23,7 +23,7 @@ export function LogContentInline({
         {
           [LogLevel.ERROR]: 'text-destructive',
           [LogLevel.WARNING]: 'text-warning',
-          [LogLevel.INFO]: 'text-muted-foreground',
+          [LogLevel.INFO]: 'text-foreground',
         }[level],
       )}
     >
@@ -32,10 +32,7 @@ export function LogContentInline({
   )
 }
 
-export function LogContentBlock({
-  content: rawContent,
-  level,
-}: LogContentProps) {
+export function LogContentBlock({ content: rawContent }: LogContentProps) {
   const content = renderLogContent(rawContent, false)
 
   if (isObject(content)) {

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Link, useLocation, useNavigate } from '@tanstack/react-router'
-import { RiAddLine, RiBox1Line, RiBox2Line, RiBox3Line } from '@remixicon/react'
+import { RiAddLine, RiBox1Line } from '@remixicon/react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Logo } from '../logo'
@@ -91,7 +91,7 @@ export function AppSidebar() {
                       to="/projects/$projectId"
                       params={{ projectId: project.id }}
                     >
-                      <RiBox3Line />
+                      <RiBox1Line />
                       {project.title}
                     </Link>
                   </SidebarMenuButton>
