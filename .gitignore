@@ -12,4 +12,5 @@ count.txt
 .vinxi
 todos.json
 
+dev.db
 /generated/prisma
