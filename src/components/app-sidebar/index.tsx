@@ -1,13 +1,11 @@
 import axios from 'axios'
-import { Link, useLocation, useNavigate } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 import { RiAddLine, RiBox1Line } from '@remixicon/react'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { Logo } from '../logo'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { ProjectSearch } from './partials/project-search'
-import type { ProjectCreateInput } from 'generated/prisma/models'
 import type { Project } from 'generated/prisma/browser'
 import {
   Sidebar,
@@ -26,34 +24,15 @@ import {
 export function AppSidebar() {
   // Router state
   const { pathname } = useLocation()
-  const navigate = useNavigate()
 
   // Local state
   const [projectSearch, setProjectSearch] = useState<string>('')
 
   // Server state
-  const { data: projects, refetch: refetchProjects } = useQuery({
+  const { data: projects } = useQuery({
     queryKey: ['projects'],
     queryFn: () =>
       axios.get<Array<Project>>('/api/projects').then((res) => res.data),
-  })
-
-  const { mutate: createProject } = useMutation({
-    mutationFn: (body: ProjectCreateInput) =>
-      axios.post<Project>('/api/projects', body).then((res) => res.data),
-    onSuccess: (res) => {
-      toast.success('Project created')
-      refetchProjects()
-      navigate({
-        to: '/projects/$projectId',
-        params: {
-          projectId: res.id,
-        },
-      })
-    },
-    onError: () => {
-      toast.error('Failed to create project')
-    },
   })
 
   // Helpers
@@ -82,14 +61,10 @@ export function AppSidebar() {
           <SidebarGroupLabel>Projects</SidebarGroupLabel>
           <Tooltip>
             <TooltipTrigger asChild>
-              <SidebarGroupAction
-                onClick={() => {
-                  createProject({
-                    title: 'New project',
-                  })
-                }}
-              >
-                <RiAddLine />
+              <SidebarGroupAction asChild>
+                <Link to="/projects/new">
+                  <RiAddLine />
+                </Link>
               </SidebarGroupAction>
             </TooltipTrigger>
             <TooltipContent side="right">New project</TooltipContent>

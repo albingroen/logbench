@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProjectsNewRouteImport } from './routes/projects.new'
 import { Route as ApiProjectsRouteImport } from './routes/api.projects'
 import { Route as ApiIpRouteImport } from './routes/api.ip'
 import { Route as ProjectsProjectIdRouteRouteImport } from './routes/projects.$projectId.route'
@@ -22,6 +23,11 @@ import { Route as ApiProjectsProjectIdLogsLogIdRouteImport } from './routes/api.
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsNewRoute = ProjectsNewRouteImport.update({
+  id: '/projects/new',
+  path: '/projects/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiProjectsRoute = ApiProjectsRouteImport.update({
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/projects/$projectId': typeof ProjectsProjectIdRouteRouteWithChildren
   '/api/ip': typeof ApiIpRoute
   '/api/projects': typeof ApiProjectsRouteWithChildren
+  '/projects/new': typeof ProjectsNewRoute
   '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
   '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/projects/$projectId': typeof ProjectsProjectIdRouteRouteWithChildren
   '/api/ip': typeof ApiIpRoute
   '/api/projects': typeof ApiProjectsRouteWithChildren
+  '/projects/new': typeof ProjectsNewRoute
   '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
   '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/projects/$projectId': typeof ProjectsProjectIdRouteRouteWithChildren
   '/api/ip': typeof ApiIpRoute
   '/api/projects': typeof ApiProjectsRouteWithChildren
+  '/projects/new': typeof ProjectsNewRoute
   '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
   '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/projects/$projectId'
     | '/api/ip'
     | '/api/projects'
+    | '/projects/new'
     | '/api/projects/$projectId'
     | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/projects/$projectId'
     | '/api/ip'
     | '/api/projects'
+    | '/projects/new'
     | '/api/projects/$projectId'
     | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/projects/$projectId'
     | '/api/ip'
     | '/api/projects'
+    | '/projects/new'
     | '/api/projects/$projectId'
     | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   ProjectsProjectIdRouteRoute: typeof ProjectsProjectIdRouteRouteWithChildren
   ApiIpRoute: typeof ApiIpRoute
   ApiProjectsRoute: typeof ApiProjectsRouteWithChildren
+  ProjectsNewRoute: typeof ProjectsNewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -153,6 +166,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/new': {
+      id: '/projects/new'
+      path: '/projects/new'
+      fullPath: '/projects/new'
+      preLoaderRoute: typeof ProjectsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/projects': {
@@ -272,6 +292,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsProjectIdRouteRoute: ProjectsProjectIdRouteRouteWithChildren,
   ApiIpRoute: ApiIpRoute,
   ApiProjectsRoute: ApiProjectsRouteWithChildren,
+  ProjectsNewRoute: ProjectsNewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
