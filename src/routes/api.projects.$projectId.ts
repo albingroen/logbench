@@ -19,6 +19,21 @@ export const Route = createFileRoute('/api/projects/$projectId')({
           },
         })
       },
+      DELETE: async ({ params }) => {
+        const { projectId } = params
+
+        const project = await prisma.project.delete({
+          where: {
+            id: projectId,
+          },
+        })
+
+        return new Response(JSON.stringify(project), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+      },
     },
   },
 })

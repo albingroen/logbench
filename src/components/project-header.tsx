@@ -2,7 +2,6 @@ import { RiClipboardLine, RiMoreLine, RiSearchLine } from '@remixicon/react'
 import { useHotkey } from '@tanstack/react-hotkeys'
 import Mark from 'mark.js'
 import { useMemo, useRef, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { toast } from 'sonner'
 import {
@@ -30,19 +29,16 @@ import type { Project } from 'generated/prisma/browser'
 import { Route } from '@/routes/projects.$projectId.route'
 import { copyToClipboard } from '@/lib/clipboard'
 
-export function ProjectHeader() {
+type ProjectHeaderProps = {
+  project: Project
+}
+
+export function ProjectHeader({ project }: ProjectHeaderProps) {
   // Helpers
   const mark = useMemo(() => new Mark('.logs'), [])
 
   // Router state
   const { projectId } = Route.useParams()
-
-  // Server state
-  const { data: project } = useQuery({
-    queryKey: ['projects', projectId],
-    queryFn: () =>
-      axios.get<Project>(`/api/projects/${projectId}`).then((res) => res.data),
-  })
 
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -69,7 +65,7 @@ export function ProjectHeader() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbPage>{project?.title}</BreadcrumbPage>
+              <BreadcrumbPage>{project.title}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

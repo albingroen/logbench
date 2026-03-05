@@ -27,7 +27,7 @@ export const Route = createFileRoute('/projects/new')({
 const formSchema = z.object({
   title: z
     .string()
-    .min(5, 'Project title must be at least 1 character.')
+    .min(1, 'Project title must be at least 1 character.')
     .max(256, 'Project title must be at most 256 characters.'),
 })
 
@@ -70,7 +70,7 @@ function RouteComponent() {
       await new Promise((res) => {
         setTimeout(() => {
           res(true)
-        }, 2000)
+        }, 500)
       })
       return createProject(value)
     },

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { format, formatDistanceToNow } from 'date-fns'
+import { toast } from 'sonner'
 import type { Log } from 'generated/prisma/browser'
 import {
   Sheet,
@@ -16,7 +17,6 @@ import {
 import { LogContentBlock } from '@/components/log-content'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { toast } from 'sonner'
 import { LogLevelBadge } from '@/components/log-level'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -48,7 +48,7 @@ function RouteComponent() {
       axios
         .delete<Log>(`/api/projects/${projectId}/logs/${logId}`)
         .then((res) => res.data),
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.success('Log deleted')
       queryClient.invalidateQueries({
         queryKey: ['projects', projectId, 'logs'],

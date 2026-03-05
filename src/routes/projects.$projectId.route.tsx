@@ -1,11 +1,21 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
 import { useEffect, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import type { Log } from 'generated/prisma/browser'
+import { RiArrowRightLine, RiBox1Line } from '@remixicon/react'
+import type { Log, Project } from 'generated/prisma/browser'
 import { ProjectHeader } from '@/components/project-header'
 import { Logs } from '@/components/logs'
 import { CurlExample } from '@/components/curl-example'
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
+import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/projects/$projectId')({
   component: RouteComponent,
@@ -16,6 +26,12 @@ function RouteComponent() {
   const { projectId } = Route.useParams()
 
   // Server state
+  const { data: project, isLoading: isProjectLoading } = useQuery({
+    queryKey: ['projects', projectId],
+    queryFn: () =>
+      axios.get<Project>(`/api/projects/${projectId}`).then((res) => res.data),
+  })
+
   const logsQueryKey = useMemo(
     () => ['projects', projectId, 'logs'],
     [projectId],
@@ -65,9 +81,37 @@ function RouteComponent() {
     return () => eventSource.close()
   }, [projectId])
 
+  if (isProjectLoading) {
+    return null
+  }
+
+  if (!project) {
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <RiBox1Line />
+          </EmptyMedia>
+          <EmptyTitle>Project not found</EmptyTitle>
+          <EmptyDescription>
+            This project does not seem to exist unfortunately.
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent className="flex-row justify-center gap-2">
+          <Button asChild>
+            <Link to="/projects/new">
+              Create Project
+              <RiArrowRightLine />
+            </Link>
+          </Button>
+        </EmptyContent>
+      </Empty>
+    )
+  }
+
   return (
     <>
-      <ProjectHeader />
+      <ProjectHeader project={project} />
 
       {logs?.length ? (
         <Logs data={logs} />

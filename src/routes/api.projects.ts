@@ -5,7 +5,15 @@ export const Route = createFileRoute('/api/projects')({
   server: {
     handlers: {
       GET: async () => {
-        const projects = await prisma.project.findMany()
+        const projects = await prisma.project.findMany({
+          include: {
+            _count: {
+              select: {
+                logs: true,
+              },
+            },
+          },
+        })
 
         return new Response(JSON.stringify(projects), {
           headers: {
