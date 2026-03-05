@@ -12,12 +12,15 @@ export const columns: Array<ColumnDef<Log>> = [
       const createdAt = row.getValue<Date>('createdAt')
       const formatted = format(createdAt, 'yyyy-MM-dd HH:mm:ss')
 
-      return formatted
+      return <span>{formatted}</span>
     },
   },
   {
     accessorKey: 'id',
     header: 'ID',
+    cell: ({ row }) => {
+      return <span>{row.getValue('id')}</span>
+    },
   },
   {
     header: 'Type',

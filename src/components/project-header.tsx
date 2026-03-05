@@ -1,7 +1,6 @@
-import { RiMoreLine, RiSearchLine } from '@remixicon/react'
+import { RiCloseLine, RiMoreLine, RiSearchLine } from '@remixicon/react'
 import { useHotkey } from '@tanstack/react-hotkeys'
-import Mark from 'mark.js'
-import { useMemo, useRef, useState } from 'react'
+import { useRef } from 'react'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,36 +10,43 @@ import {
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
   InputGroupInput,
-  InputGroupText,
 } from './ui/input-group'
 import { Separator } from './ui/separator'
 import { SidebarTrigger } from './ui/sidebar'
 import { Button } from './ui/button'
 import { ProjectDropdown } from './project-dropdown'
+import { Badge } from './ui/badge'
 import type { Project } from 'generated/prisma/browser'
 
 type ProjectHeaderProps = {
+  onChangeSearch: (value: string) => void
+  filteredLogsCount: number
   project: Project
+  search: string
 }
 
-export function ProjectHeader({ project }: ProjectHeaderProps) {
-  // Helpers
-  const mark = useMemo(() => new Mark('.logs'), [])
-
+export function ProjectHeader({
+  filteredLogsCount,
+  onChangeSearch,
+  project,
+  search,
+}: ProjectHeaderProps) {
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Helpers
+  function focusSearchInput() {
+    searchInputRef.current?.focus()
+  }
 
   // Keyboard shortcuts
   useHotkey('Mod+F', (e) => {
     e.preventDefault()
     e.stopPropagation()
-
-    searchInputRef.current?.focus()
+    focusSearchInput()
   })
-
-  // Local state
-  const [matchCount, setMatchCount] = useState<number>()
 
   return (
     <header className="flex h-12 shrink-0 items-center gap-6 border-b px-4 sticky top-0 bg-background z-10">
@@ -61,26 +67,33 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
       <div className="flex-1 flex gap-2.5">
         <InputGroup className="flex-1">
           <InputGroupInput
+            value={search}
             ref={searchInputRef}
             placeholder="Search logs..."
             onChange={(e) => {
-              mark.unmark()
-              mark.mark(e.currentTarget.value, {
-                done: (newMatchCount) => {
-                  if (e.currentTarget.value) {
-                    setMatchCount(newMatchCount)
-                  } else {
-                    setMatchCount(undefined)
-                  }
-                },
-              })
+              const newValue = e.currentTarget.value
+              onChangeSearch(newValue)
             }}
           />
-          {typeof matchCount === 'number' && (
+          {search && typeof filteredLogsCount === 'number' && (
             <InputGroupAddon align="inline-end">
-              <InputGroupText>
-                {matchCount.toLocaleString()} result(s)
-              </InputGroupText>
+              <Badge variant="secondary">
+                {filteredLogsCount.toLocaleString()} log(s)
+              </Badge>
+            </InputGroupAddon>
+          )}
+          {search && (
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton
+                size="icon-xs"
+                aria-label="Clear"
+                onClick={() => {
+                  onChangeSearch('')
+                  focusSearchInput()
+                }}
+              >
+                <RiCloseLine />
+              </InputGroupButton>
             </InputGroupAddon>
           )}
           <InputGroupAddon align="inline-end">

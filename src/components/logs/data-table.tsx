@@ -101,11 +101,10 @@ export function DataTable<TData, TValue>({
       </TableHeader>
       <TableBody className="logs">
         {table.getRowModel().rows.map((row) => (
-          <ContextMenu>
+          <ContextMenu key={row.id}>
             <ContextMenuTrigger asChild>
               <TableRow
                 role="button"
-                key={row.id}
                 data-state={
                   row.getIsSelected()
                     ? 'selected'

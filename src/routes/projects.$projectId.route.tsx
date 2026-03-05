@@ -1,8 +1,9 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { RiArrowRightLine, RiBox1Line } from '@remixicon/react'
+import Mark from 'mark.js'
 import type { Log, Project } from 'generated/prisma/browser'
 import { ProjectHeader } from '@/components/project-header'
 import { Logs } from '@/components/logs'
@@ -24,6 +25,9 @@ export const Route = createFileRoute('/projects/$projectId')({
 function RouteComponent() {
   // Router state
   const { projectId } = Route.useParams()
+
+  // Local state
+  const [search, setSearch] = useState<string>('')
 
   // Server state
   const { data: project, isLoading: isProjectLoading } = useQuery({
@@ -81,6 +85,37 @@ function RouteComponent() {
     return () => eventSource.close()
   }, [projectId])
 
+  // Helpers
+  const mark = useMemo(() => new Mark('.logs'), [])
+
+  useEffect(() => {
+    mark.unmark()
+    mark.mark(search)
+  }, [search, logs?.length])
+
+  const filteredLogs = useMemo(() => {
+    if (!logs) {
+      return []
+    }
+
+    if (!search) {
+      return logs
+    }
+
+    const lcSearch = search.toLowerCase()
+
+    return logs.filter((log) => {
+      return (
+        log.id.toLowerCase().includes(lcSearch) ||
+        log.projectId?.toLowerCase().includes(lcSearch) ||
+        log.level.includes(lcSearch) ||
+        (log.createdAt as unknown as string).includes(lcSearch) ||
+        (log.updatedAt as unknown as string).includes(lcSearch) ||
+        JSON.stringify(log.content).toLowerCase().includes(lcSearch)
+      )
+    })
+  }, [logs, search])
+
   if (isProjectLoading) {
     return null
   }
@@ -111,10 +146,15 @@ function RouteComponent() {
 
   return (
     <>
-      <ProjectHeader project={project} />
+      <ProjectHeader
+        search={search}
+        project={project}
+        onChangeSearch={setSearch}
+        filteredLogsCount={filteredLogs.length}
+      />
 
       {logs?.length ? (
-        <Logs data={logs} />
+        <Logs data={filteredLogs} />
       ) : (
         !isLogsLoading && <CodeExamples projectId={projectId} />
       )}
