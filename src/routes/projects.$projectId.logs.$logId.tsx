@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { format, formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
+import { RiBookmarkFill } from '@remixicon/react'
 import type { Log } from 'generated/prisma/browser'
 import {
   Sheet,
@@ -85,6 +86,12 @@ function RouteComponent() {
                 {format(log.createdAt, 'yyyy-MM-dd HH:mm:ss')}
               </SheetTitle>
               <div className="flex items-center gap-1.5 mt-1.5">
+                {log.isBookmarked && (
+                  <Badge variant="warning">
+                    <RiBookmarkFill />
+                    Bookmarkd
+                  </Badge>
+                )}
                 <LogLevelBadge level={log.level} />
                 <Badge variant="outline">
                   {formatDistanceToNow(log.createdAt, { addSuffix: true })}

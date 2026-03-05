@@ -34,6 +34,23 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/$logId')({
           },
         })
       },
+      PUT: async ({ request, params }) => {
+        const { logId } = params
+        const body = await request.json()
+
+        const log = await prisma.log.update({
+          where: {
+            id: logId,
+          },
+          data: body,
+        })
+
+        return new Response(JSON.stringify(log), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+      },
     },
   },
 })

@@ -4,9 +4,20 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useLocation, useNavigate } from '@tanstack/react-router'
+import { RiBookmarkFill, RiBookmarkLine } from '@remixicon/react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
+import { toast } from 'sonner'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '../ui/context-menu'
 import type { ColumnDef } from '@tanstack/react-table'
 
-import type { Log } from 'generated/prisma/browser'
+import type { Log, Project } from 'generated/prisma/browser'
+import type { LogUpdateInput } from 'generated/prisma/models'
 import {
   Table,
   TableBody,
@@ -37,6 +48,32 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
   })
 
+  // Server state
+  const queryClient = useQueryClient()
+
+  const { mutate: updateLog } = useMutation({
+    mutationFn: ({
+      projectId,
+      logId,
+      body,
+    }: {
+      projectId: Project['id']
+      logId: Log['id']
+      body: LogUpdateInput
+    }) =>
+      axios
+        .put<Log>(`/api/projects/${projectId}/logs/${logId}`, body)
+        .then((res) => res.data),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({
+        queryKey: ['projects', res.projectId, 'logs'],
+      })
+    },
+    onError: () => {
+      toast.error('Failed to update log')
+    },
+  })
+
   return (
     <Table className="table-fixed">
       <TableHeader>
@@ -64,42 +101,93 @@ export function DataTable<TData, TValue>({
       </TableHeader>
       <TableBody className="logs">
         {table.getRowModel().rows.map((row) => (
-          <TableRow
-            role="button"
-            key={row.id}
-            data-state={row.getIsSelected() ? 'selected' : undefined}
-            data-active={location.pathname.includes(row.original.id)}
-            onClick={() => {
-              if (!row.original.projectId) {
-                return
-              }
-
-              navigate({
-                to: '/projects/$projectId/logs/$logId',
-                params: {
-                  projectId: row.original.projectId,
-                  logId: row.original.id,
-                },
-                resetScroll: false,
-              })
-            }}
-          >
-            {row.getVisibleCells().map((cell, i) => (
-              <TableCell
-                key={cell.id}
-                className={
-                  [
-                    'w-44 text-muted-foreground',
-                    'w-56 text-muted-foreground',
-                    'w-20',
-                    'w-auto',
-                  ][i]
+          <ContextMenu>
+            <ContextMenuTrigger asChild>
+              <TableRow
+                role="button"
+                key={row.id}
+                data-state={
+                  row.getIsSelected()
+                    ? 'selected'
+                    : row.original.isBookmarked
+                      ? 'bookmarked'
+                      : undefined
                 }
+                data-active={location.pathname.includes(row.original.id)}
+                onClick={() => {
+                  if (!row.original.projectId) {
+                    return
+                  }
+
+                  navigate({
+                    to: '/projects/$projectId/logs/$logId',
+                    params: {
+                      projectId: row.original.projectId,
+                      logId: row.original.id,
+                    },
+                    resetScroll: false,
+                  })
+                }}
               >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
+                {row.getVisibleCells().map((cell, i) => (
+                  <TableCell
+                    key={cell.id}
+                    className={
+                      [
+                        'w-44 text-muted-foreground',
+                        'w-56 text-muted-foreground',
+                        'w-20',
+                        'w-auto',
+                      ][i]
+                    }
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+              {row.original.isBookmarked ? (
+                <ContextMenuItem
+                  onSelect={() => {
+                    if (!row.original.projectId) {
+                      return
+                    }
+
+                    updateLog({
+                      projectId: row.original.projectId,
+                      logId: row.original.id,
+                      body: {
+                        isBookmarked: false,
+                      },
+                    })
+                  }}
+                >
+                  <RiBookmarkFill className="text-warning" />
+                  Unmark
+                </ContextMenuItem>
+              ) : (
+                <ContextMenuItem
+                  onSelect={() => {
+                    if (!row.original.projectId) {
+                      return
+                    }
+
+                    updateLog({
+                      projectId: row.original.projectId,
+                      logId: row.original.id,
+                      body: {
+                        isBookmarked: true,
+                      },
+                    })
+                  }}
+                >
+                  <RiBookmarkLine />
+                  Bookmark
+                </ContextMenuItem>
+              )}
+            </ContextMenuContent>
+          </ContextMenu>
         ))}
       </TableBody>
     </Table>
