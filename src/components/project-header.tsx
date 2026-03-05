@@ -130,6 +130,19 @@ export function ProjectHeader() {
               <RiClipboardLine />
               Copy POST URL
             </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onSelect={() => {
+                toast.promise(copyToClipboard(projectId), {
+                  loading: 'Loading...',
+                  success: `Project ID copied to clipboard`,
+                  error: 'Failed to copy project ID to clipboard',
+                })
+              }}
+            >
+              <RiClipboardLine />
+              Copy project ID
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
