@@ -87,40 +87,43 @@ curl -X POST "http://localhost:1447/api/projects/<projectId>/logs/ingest" \
   -d '{"content":{"message":"Hello from curl","level":"INFO"}}'
 ```
 
-## SDK Example
+## JavaScript SDK
 
-Logbench doesn't yet have an official SDK, but it's coming in the near future. If you still want to play with Logbench, you can try the example below.
+The official JavaScript/TypeScript SDK is available as [`logbench-js`](https://www.npmjs.com/package/logbench-js).
 
-This is useful as a quick local logger, and you can adapt the same pattern to integrate with tools like [evlog.dev](https://www.evlog.dev).
+### Install
 
-```ts
-import superjson from 'superjson'
-
-superjson.registerCustom(
-  {
-    isApplicable: (v) => typeof v === 'function',
-    serialize: (v) => v.toString(),
-  },
-  'function',
-)
-
-export function logbench(content: unknown) {
-  fetch(
-    `http://${process.env.LOGBENCH_URL}/api/projects/${process.env.LOGBENCH_PROJECT_ID}/logs/ingest`,
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        content: superjson.serialize(content).json
-      })
-    }
-  )
-}
+```bash
+bun add logbench-js
 ```
 
-Required environment variables:
+```bash
+npm install logbench-js
+```
 
-- `LOGBENCH_URL` (example: `localhost:1447`)
-- `LOGBENCH_PROJECT_ID` (target project id)
+### Usage
+
+```typescript
+import { Logbench } from "logbench-js";
+
+const logger = new Logbench({
+  url: "http://localhost:1447",
+  projectId: "your-project-id",
+});
+
+logger.info("Server started on port 3000");
+logger.warn("Disk usage above 80%");
+logger.err("Failed to connect to database");
+```
+
+The SDK provides three log-level methods: `info`, `warn`, and `err`. All methods accept any number of arguments of any type. Values are serialized with [superjson](https://github.com/flightcontrolhq/superjson), so types like `Date`, `Set`, `Map`, `BigInt`, and `RegExp` are preserved.
+
+```typescript
+logger.info("User signed in", { userId: "abc123", at: new Date() });
+logger.err("Request failed", { status: 500, headers: new Map([["x-request-id", "abc"]]) });
+```
+
+Errors from the HTTP call are silently caught so logging never crashes your application.
 
 ## Notes
 
