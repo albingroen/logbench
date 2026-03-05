@@ -1,5 +1,5 @@
-import type { Log } from 'generated/prisma/browser'
 import { isObject } from './utils'
+import type { Log } from 'generated/prisma/browser'
 
 export function renderLogContent(
   content: Log['content'],
