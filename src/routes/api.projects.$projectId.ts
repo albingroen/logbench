@@ -34,6 +34,23 @@ export const Route = createFileRoute('/api/projects/$projectId')({
           },
         })
       },
+      PUT: async ({ request, params }) => {
+        const { projectId } = params
+        const body = await request.json()
+
+        const project = await prisma.project.update({
+          where: {
+            id: projectId,
+          },
+          data: body,
+        })
+
+        return new Response(JSON.stringify(project), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+      },
     },
   },
 })

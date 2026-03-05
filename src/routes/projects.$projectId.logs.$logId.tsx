@@ -72,7 +72,7 @@ function RouteComponent() {
         },
         resetScroll: false,
       })
-    }, 300)
+    }, 200)
   }
 
   return (

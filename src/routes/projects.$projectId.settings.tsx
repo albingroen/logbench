@@ -1,41 +1,57 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useForm } from '@tanstack/react-form'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { toast } from 'sonner'
-import type { ProjectCreateInput } from 'generated/prisma/models'
+import { useForm } from '@tanstack/react-form'
+import { useState } from 'react'
 import type { Project } from 'generated/prisma/browser'
+import type { ProjectUpdateInput } from 'generated/prisma/models'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { projectSchema } from '@/lib/project'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { NewProjectHeader } from '@/components/new-project-header'
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSet,
 } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
-import { projectSchema } from '@/lib/project'
 
-export const Route = createFileRoute('/projects/new')({
+export const Route = createFileRoute('/projects/$projectId/settings')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
   // Router state
+  const { projectId } = Route.useParams()
   const navigate = useNavigate()
+
+  // Local state
+  const [isOpen, setIsOpen] = useState<boolean>(true)
 
   // Server state
   const queryClient = useQueryClient()
 
-  const { mutateAsync: createProject } = useMutation({
-    mutationFn: (body: ProjectCreateInput) =>
-      axios.post<Project>('/api/projects', body).then((res) => res.data),
+  const { data: project } = useQuery({
+    queryKey: ['projects', projectId],
+    queryFn: () =>
+      axios.get<Project>(`/api/projects/${projectId}`).then((res) => res.data),
+  })
+
+  const { mutateAsync: updateProject } = useMutation({
+    mutationFn: (body: ProjectUpdateInput) =>
+      axios
+        .put<Project>(`/api/projects/${projectId}`, body)
+        .then((res) => res.data),
     onSuccess: (res) => {
-      toast.success('Project created')
+      toast.success('Project updated')
       queryClient.invalidateQueries({
         queryKey: ['projects'],
       })
@@ -54,32 +70,45 @@ function RouteComponent() {
   // Form state
   const form = useForm({
     defaultValues: {
-      title: '',
+      title: project?.title ?? '',
     },
     validators: {
       onSubmit: projectSchema,
     },
     onSubmit: async ({ value }) => {
-      return createProject(value)
+      return updateProject(value)
     },
   })
 
   return (
-    <>
-      <NewProjectHeader />
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        setIsOpen(false)
+        setTimeout(() => {
+          navigate({
+            to: '/projects/$projectId',
+            params: {
+              projectId,
+            },
+          })
+        }, 100)
+      }}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Project settings</DialogTitle>
+          <DialogDescription>
+            Here you can manage your project details
+          </DialogDescription>
+        </DialogHeader>
 
-      <form
-        className="p-6 max-w-screen-sm"
-        onSubmit={(e) => {
-          e.preventDefault()
-          form.handleSubmit()
-        }}
-      >
-        <FieldSet>
-          <FieldLegend>New project</FieldLegend>
-          <FieldDescription>
-            Create a new project to ingest logs to.
-          </FieldDescription>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            form.handleSubmit()
+          }}
+        >
           <FieldGroup>
             <form.Field
               name="title"
@@ -91,22 +120,18 @@ function RouteComponent() {
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor="title">Title</FieldLabel>
                     <Input
-                      autoFocus
                       id={field.name}
                       name={field.name}
                       autoComplete="off"
                       aria-invalid={isInvalid}
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      placeholder="Mobile app"
+                      placeholder={project?.title ?? 'Mobile app'}
                       onChange={(e) => field.handleChange(e.target.value)}
                     />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
-                    <FieldDescription>
-                      The title for your project. You can change this later.
-                    </FieldDescription>
                   </Field>
                 )
               }}
@@ -117,15 +142,15 @@ function RouteComponent() {
                 selector={(state) => [state.canSubmit, state.isSubmitting]}
                 children={([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit}>
-                    Create project
+                    Update project
                     {isSubmitting && <Spinner />}
                   </Button>
                 )}
               />
             </Field>
           </FieldGroup>
-        </FieldSet>
-      </form>
-    </>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }

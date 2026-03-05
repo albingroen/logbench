@@ -14,6 +14,7 @@ import { Route as ProjectsNewRouteImport } from './routes/projects.new'
 import { Route as ApiProjectsRouteImport } from './routes/api.projects'
 import { Route as ApiIpRouteImport } from './routes/api.ip'
 import { Route as ProjectsProjectIdRouteRouteImport } from './routes/projects.$projectId.route'
+import { Route as ProjectsProjectIdSettingsRouteImport } from './routes/projects.$projectId.settings'
 import { Route as ApiProjectsProjectIdRouteImport } from './routes/api.projects.$projectId'
 import { Route as ProjectsProjectIdLogsLogIdRouteImport } from './routes/projects.$projectId.logs.$logId'
 import { Route as ApiProjectsProjectIdLogsRouteImport } from './routes/api.projects.$projectId.logs'
@@ -45,6 +46,12 @@ const ProjectsProjectIdRouteRoute = ProjectsProjectIdRouteRouteImport.update({
   path: '/projects/$projectId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectsProjectIdSettingsRoute =
+  ProjectsProjectIdSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => ProjectsProjectIdRouteRoute,
+  } as any)
 const ApiProjectsProjectIdRoute = ApiProjectsProjectIdRouteImport.update({
   id: '/$projectId',
   path: '/$projectId',
@@ -82,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/api/projects': typeof ApiProjectsRouteWithChildren
   '/projects/new': typeof ProjectsNewRoute
   '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
+  '/projects/$projectId/settings': typeof ProjectsProjectIdSettingsRoute
   '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
   '/api/projects/$projectId/logs/$logId': typeof ApiProjectsProjectIdLogsLogIdRoute
@@ -94,6 +102,7 @@ export interface FileRoutesByTo {
   '/api/projects': typeof ApiProjectsRouteWithChildren
   '/projects/new': typeof ProjectsNewRoute
   '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
+  '/projects/$projectId/settings': typeof ProjectsProjectIdSettingsRoute
   '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
   '/api/projects/$projectId/logs/$logId': typeof ApiProjectsProjectIdLogsLogIdRoute
@@ -107,6 +116,7 @@ export interface FileRoutesById {
   '/api/projects': typeof ApiProjectsRouteWithChildren
   '/projects/new': typeof ProjectsNewRoute
   '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
+  '/projects/$projectId/settings': typeof ProjectsProjectIdSettingsRoute
   '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
   '/api/projects/$projectId/logs/$logId': typeof ApiProjectsProjectIdLogsLogIdRoute
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/api/projects'
     | '/projects/new'
     | '/api/projects/$projectId'
+    | '/projects/$projectId/settings'
     | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
     | '/api/projects/$projectId/logs/$logId'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/api/projects'
     | '/projects/new'
     | '/api/projects/$projectId'
+    | '/projects/$projectId/settings'
     | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
     | '/api/projects/$projectId/logs/$logId'
@@ -145,6 +157,7 @@ export interface FileRouteTypes {
     | '/api/projects'
     | '/projects/new'
     | '/api/projects/$projectId'
+    | '/projects/$projectId/settings'
     | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
     | '/api/projects/$projectId/logs/$logId'
@@ -196,6 +209,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsProjectIdRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/projects/$projectId/settings': {
+      id: '/projects/$projectId/settings'
+      path: '/settings'
+      fullPath: '/projects/$projectId/settings'
+      preLoaderRoute: typeof ProjectsProjectIdSettingsRouteImport
+      parentRoute: typeof ProjectsProjectIdRouteRoute
+    }
     '/api/projects/$projectId': {
       id: '/api/projects/$projectId'
       path: '/$projectId'
@@ -235,11 +255,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface ProjectsProjectIdRouteRouteChildren {
+  ProjectsProjectIdSettingsRoute: typeof ProjectsProjectIdSettingsRoute
   ProjectsProjectIdLogsLogIdRoute: typeof ProjectsProjectIdLogsLogIdRoute
 }
 
 const ProjectsProjectIdRouteRouteChildren: ProjectsProjectIdRouteRouteChildren =
   {
+    ProjectsProjectIdSettingsRoute: ProjectsProjectIdSettingsRoute,
     ProjectsProjectIdLogsLogIdRoute: ProjectsProjectIdLogsLogIdRoute,
   }
 

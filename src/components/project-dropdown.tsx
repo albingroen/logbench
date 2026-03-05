@@ -1,7 +1,12 @@
-import { RiClipboardLine, RiDeleteBinLine } from '@remixicon/react'
+import {
+  RiClipboardLine,
+  RiDeleteBinLine,
+  RiSettingsLine,
+} from '@remixicon/react'
 import { useContext } from 'react'
 import axios from 'axios'
 import { toast } from 'sonner'
+import { Link } from '@tanstack/react-router'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,6 +65,18 @@ export function ProjectDropdown({ children, project }: ProjectDropdownProps) {
         >
           <RiClipboardLine />
           Copy project ID
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem asChild>
+          <Link
+            to="/projects/$projectId/settings"
+            params={{ projectId: project.id }}
+          >
+            <RiSettingsLine />
+            Project settings
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
