@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { codeToHtml } from 'shiki'
 import axios from 'axios'
 import { useMemo } from 'react'
 import { toast } from 'sonner'
@@ -32,40 +33,47 @@ export function CurlExample({ projectId }: CurlExampleProps) {
     [ip, projectId],
   )
 
-  if (!curlCommand) {
+  const { data: curlExample } = useQuery({
+    queryKey: ['projects', projectId, 'examples', 'curl', curlCommand],
+    queryFn: async () => {
+      if (!curlCommand) {
+        return
+      }
+
+      const html = await codeToHtml(curlCommand, {
+        lang: 'shell',
+        theme: 'vitesse-dark',
+      })
+
+      return html
+    },
+    enabled: !!curlCommand,
+  })
+
+  if (!curlCommand || !curlExample) {
     return null
   }
 
   return (
-    <div className="p-6 flex-1 flex justify-center items-center flex-col gap-4">
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-1.5">
-          <p className="text-lg font-medium">Let's send your first log</p>
-          <p className="text-sm text-muted-foreground">
-            To start ingesting logs, you can start by using the cURL command
-            below.
-          </p>
-        </div>
-        <div className="flex flex-col gap-7">
-          <pre className="relative rounded bg-muted/30 border p-3 font-mono text-sm font-medium max-w-fit break-all whitespace-pre-wrap">
-            <code>{curlCommand}</code>
-          </pre>
-          <Button
-            className="self-end"
-            size="lg"
-            type="button"
-            onClick={() => {
-              toast.promise(copyToClipboard(curlCommand), {
-                loading: 'Loading...',
-                success: `Command copied to clipboard`,
-                error: 'Failed to copy command to clipboard',
-              })
-            }}
-          >
-            Copy command
-          </Button>
-        </div>
-      </div>
+    <div className="flex flex-col gap-2.5">
+      <div
+        className="code-example"
+        dangerouslySetInnerHTML={{ __html: curlExample }}
+      />
+
+      <Button
+        type="button"
+        variant="outline"
+        onClick={() => {
+          toast.promise(copyToClipboard(curlCommand), {
+            loading: 'Loading...',
+            success: `Command copied to clipboard`,
+            error: 'Failed to copy command to clipboard',
+          })
+        }}
+      >
+        Copy command
+      </Button>
     </div>
   )
 }

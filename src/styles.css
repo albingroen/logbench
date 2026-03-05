@@ -96,6 +96,14 @@
   }
 }
 
+@layer components {
+  .code-example {
+    pre {
+      @apply p-4 rounded-md text-sm;
+    }
+  }
+}
+
 mark {
   @apply bg-[#365926] text-white;
 }

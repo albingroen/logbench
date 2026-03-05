@@ -6,7 +6,6 @@ import { RiArrowRightLine, RiBox1Line } from '@remixicon/react'
 import type { Log, Project } from 'generated/prisma/browser'
 import { ProjectHeader } from '@/components/project-header'
 import { Logs } from '@/components/logs'
-import { CurlExample } from '@/components/curl-example'
 import {
   Empty,
   EmptyContent,
@@ -16,6 +15,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty'
 import { Button } from '@/components/ui/button'
+import { CodeExamples } from '@/components/code-examples'
 
 export const Route = createFileRoute('/projects/$projectId')({
   component: RouteComponent,
@@ -116,7 +116,7 @@ function RouteComponent() {
       {logs?.length ? (
         <Logs data={logs} />
       ) : (
-        !isLogsLoading && <CurlExample projectId={projectId} />
+        !isLogsLoading && <CodeExamples projectId={projectId} />
       )}
 
       <Outlet />
