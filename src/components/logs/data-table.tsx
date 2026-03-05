@@ -65,6 +65,7 @@ export function DataTable<TData, TValue>({
       <TableBody className="logs">
         {table.getRowModel().rows.map((row) => (
           <TableRow
+            role="button"
             key={row.id}
             data-state={row.getIsSelected() ? 'selected' : undefined}
             data-active={location.pathname.includes(row.original.id)}
