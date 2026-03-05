@@ -3,9 +3,10 @@ import { Link, useLocation, useNavigate } from '@tanstack/react-router'
 import { RiAddLine, RiBox1Line } from '@remixicon/react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { useMemo, useState } from 'react'
 import { Logo } from '../logo'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
-import { SearchForm } from './partials/search-form'
+import { ProjectSearch } from './partials/project-search'
 import type { ProjectCreateInput } from 'generated/prisma/models'
 import type { Project } from 'generated/prisma/browser'
 import {
@@ -26,6 +27,9 @@ export function AppSidebar() {
   // Router state
   const { pathname } = useLocation()
   const navigate = useNavigate()
+
+  // Local state
+  const [projectSearch, setProjectSearch] = useState<string>('')
 
   // Server state
   const { data: projects, refetch: refetchProjects } = useQuery({
@@ -52,6 +56,17 @@ export function AppSidebar() {
     },
   })
 
+  // Helpers
+  const filteredProjects = useMemo(
+    () =>
+      projectSearch
+        ? projects?.filter((p) =>
+            p.title.toLowerCase().includes(projectSearch.toLowerCase()),
+          )
+        : projects,
+    [projects, projectSearch],
+  )
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -60,7 +75,7 @@ export function AppSidebar() {
             <Logo />
           </SidebarGroupContent>
         </SidebarGroup>
-        <SearchForm />
+        <ProjectSearch value={projectSearch} onChange={setProjectSearch} />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -81,7 +96,7 @@ export function AppSidebar() {
           </Tooltip>
           <SidebarGroupContent>
             <SidebarMenu>
-              {projects?.map((project) => (
+              {filteredProjects?.map((project) => (
                 <SidebarMenuItem key={project.id}>
                   <SidebarMenuButton
                     asChild
