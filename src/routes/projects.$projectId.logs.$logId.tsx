@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { format, formatDistanceToNow } from 'date-fns'
+import { format, formatDistanceToNowStrict } from 'date-fns'
 import { toast } from 'sonner'
 import { RiBookmarkFill } from '@remixicon/react'
 import type { Log } from 'generated/prisma/browser'
@@ -94,7 +94,9 @@ function RouteComponent() {
                 )}
                 <LogLevelBadge level={log.level} />
                 <Badge variant="outline">
-                  {formatDistanceToNow(log.createdAt, { addSuffix: true })}
+                  {formatDistanceToNowStrict(log.createdAt, {
+                    addSuffix: true,
+                  })}
                 </Badge>
                 <Badge variant="outline">ID: {log.id}</Badge>
               </div>
@@ -108,10 +110,7 @@ function RouteComponent() {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent
-                value="content"
-                className="flex-1 overflow-y-auto overscroll-none"
-              >
+              <TabsContent value="content" className="flex-1 min-h-0">
                 <LogContentBlock level={log.level} content={log.content} />
               </TabsContent>
             </Tabs>

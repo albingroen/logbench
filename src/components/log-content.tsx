@@ -46,7 +46,7 @@ export function LogContentBlock({ content: rawContent }: LogContentProps) {
   const [isRaw, setIsRaw] = useState<boolean>(!isContentObject)
 
   return (
-    <div className="flex flex-col gap-3.5 pt-4">
+    <div className="flex flex-col gap-3 pt-4 h-full">
       <div className="flex items-center justify-between px-4">
         <Button
           variant="outline"
@@ -73,17 +73,19 @@ export function LogContentBlock({ content: rawContent }: LogContentProps) {
         )}
       </div>
 
-      {isRaw ? (
-        <pre className="bg-muted/50 py-4 px-6 text-sm/relaxed text-balance break-all">
-          {typeof content === 'string'
-            ? content
-            : JSON.stringify(content, null, 2)}
-        </pre>
-      ) : (
-        <VisualJson value={content as JsonObject}>
-          <TreeView showCounts showValues className="bg-muted/50!" />
-        </VisualJson>
-      )}
+      <div id="log-content" className="flex-1 overflow-y-auto overscroll-none">
+        {isRaw ? (
+          <pre className="bg-muted/50 py-4 px-6 text-xs/relaxed text-balance break-all">
+            {typeof content === 'string'
+              ? content
+              : JSON.stringify(content, null, 2)}
+          </pre>
+        ) : (
+          <VisualJson value={content as JsonObject}>
+            <TreeView showCounts showValues className="bg-muted/50!" />
+          </VisualJson>
+        )}
+      </div>
     </div>
   )
 }
