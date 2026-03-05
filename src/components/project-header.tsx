@@ -1,9 +1,7 @@
-import { RiClipboardLine, RiMoreLine, RiSearchLine } from '@remixicon/react'
+import { RiMoreLine, RiSearchLine } from '@remixicon/react'
 import { useHotkey } from '@tanstack/react-hotkeys'
 import Mark from 'mark.js'
 import { useMemo, useRef, useState } from 'react'
-import axios from 'axios'
-import { toast } from 'sonner'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,15 +17,8 @@ import {
 import { Separator } from './ui/separator'
 import { SidebarTrigger } from './ui/sidebar'
 import { Button } from './ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu'
+import { ProjectDropdown } from './project-dropdown'
 import type { Project } from 'generated/prisma/browser'
-import { Route } from '@/routes/projects.$projectId.route'
-import { copyToClipboard } from '@/lib/clipboard'
 
 type ProjectHeaderProps = {
   project: Project
@@ -36,9 +27,6 @@ type ProjectHeaderProps = {
 export function ProjectHeader({ project }: ProjectHeaderProps) {
   // Helpers
   const mark = useMemo(() => new Mark('.logs'), [])
-
-  // Router state
-  const { projectId } = Route.useParams()
 
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -100,47 +88,11 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
           </InputGroupAddon>
         </InputGroup>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="icon" variant="ghost">
-              <RiMoreLine />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="min-w-48" align="end">
-            <DropdownMenuItem
-              onSelect={() => {
-                toast.promise(
-                  axios.get('/api/ip').then((res) => {
-                    const url = `http://${res.data}:${window.location.port}/api/projects/${projectId}/logs/ingest`
-
-                    return copyToClipboard(url)
-                  }),
-                  {
-                    loading: 'Loading...',
-                    success: `POST URL copied to clipboard`,
-                    error: 'Failed to copy POST URL to clipboard',
-                  },
-                )
-              }}
-            >
-              <RiClipboardLine />
-              Copy POST URL
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              onSelect={() => {
-                toast.promise(copyToClipboard(projectId), {
-                  loading: 'Loading...',
-                  success: `Project ID copied to clipboard`,
-                  error: 'Failed to copy project ID to clipboard',
-                })
-              }}
-            >
-              <RiClipboardLine />
-              Copy project ID
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ProjectDropdown project={project}>
+          <Button size="icon" variant="ghost">
+            <RiMoreLine />
+          </Button>
+        </ProjectDropdown>
       </div>
     </header>
   )

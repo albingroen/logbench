@@ -8,6 +8,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar/index'
 import { Toaster } from '@/components/ui/sonner'
+import { ProjectProvider } from '@/lib/context/project'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -46,8 +47,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <QueryClientProvider client={queryClient}>
           <TooltipProvider delayDuration={700}>
             <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>{children}</SidebarInset>
+              <ProjectProvider>
+                <AppSidebar />
+                <SidebarInset>{children}</SidebarInset>
+              </ProjectProvider>
               <Toaster closeButton={false} position="bottom-right" />
             </SidebarProvider>
           </TooltipProvider>
