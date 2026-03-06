@@ -53,7 +53,7 @@ export function AppSidebar() {
   return (
     <>
       <Sidebar>
-        <SidebarHeader>
+        <SidebarHeader className="pt-4 gap-3">
           <SidebarGroup>
             <SidebarGroupContent>
               <Logo />
