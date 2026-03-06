@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { codeToHtml } from 'shiki'
-import axios from 'axios'
 import { useMemo } from 'react'
 import { RiExternalLinkLine } from '@remixicon/react'
 import type { Project } from 'generated/prisma/browser'
@@ -12,28 +11,20 @@ type TypeScriptSDKExampleProps = {
 const BUN_INSTALL_COMMAND = 'bun add -D logbench-js'
 
 export function TypeScriptSDKExample({ projectId }: TypeScriptSDKExampleProps) {
-  // Server state
-  const { data: ip } = useQuery({
-    queryKey: ['ip'],
-    queryFn: () => axios.get<string>('/api/ip').then((res) => res.data),
-  })
-
   // Helpers
   const typeScriptSnippet = useMemo(
     () =>
-      ip
-        ? `import { Logbench } from "logbench-js";
+      `import { Logbench } from "logbench-js";
 
 const logger = new Logbench({
-  url: import.meta.env.VITE_LOGBENCH_URL // → "http://${ip}:${window.location.port}",
-  projectId: import.meta.env.VITE_LOGBENCH_PROJECT_ID // → "${projectId}",
+  url: import.meta.env.VITE_LOGBENCH_URL, // → ${window.location.origin}
+  projectId: import.meta.env.VITE_LOGBENCH_PROJECT_ID // → "${projectId}"
 });
 
 logger.info("Server started on port 3000");
 logger.warn("Disk usage above 80%");
-logger.err("Failed to connect to database");`
-        : null,
-    [ip, projectId],
+logger.err("Failed to connect to database");`,
+    [projectId],
   )
 
   const { data: typeScriptInstallSnippet } = useQuery({

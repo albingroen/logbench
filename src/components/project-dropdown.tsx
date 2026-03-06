@@ -4,7 +4,6 @@ import {
   RiSettingsLine,
 } from '@remixicon/react'
 import { useContext } from 'react'
-import axios from 'axios'
 import { toast } from 'sonner'
 import { Link } from '@tanstack/react-router'
 import {
@@ -37,11 +36,9 @@ export function ProjectDropdown({ children, project }: ProjectDropdownProps) {
         <DropdownMenuItem
           onSelect={() => {
             toast.promise(
-              axios.get('/api/ip').then((res) => {
-                const url = `http://${res.data}:${window.location.port}/api/projects/${project.id}/logs/ingest`
-
-                return copyToClipboard(url)
-              }),
+              copyToClipboard(
+                `${window.location.origin}/api/projects/${project.id}/logs/ingest`,
+              ),
               {
                 loading: 'Loading...',
                 success: `POST URL copied to clipboard`,

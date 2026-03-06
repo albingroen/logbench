@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { codeToHtml } from 'shiki'
-import axios from 'axios'
 import { useMemo } from 'react'
 import { toast } from 'sonner'
 import { Button } from './ui/button'
@@ -12,25 +11,17 @@ type CurlExampleProps = {
 }
 
 export function CurlExample({ projectId }: CurlExampleProps) {
-  // Server state
-  const { data: ip } = useQuery({
-    queryKey: ['ip'],
-    queryFn: () => axios.get<string>('/api/ip').then((res) => res.data),
-  })
-
   // Helpers
   const curlCommand = useMemo(
     () =>
-      ip
-        ? `curl -X POST \\
-  'http://${ip}:${window.location.port}/api/projects/${projectId}/logs/ingest' \\
+      `curl -X POST \\
+  '${window.location.origin}/api/projects/${projectId}/logs/ingest' \\
   -H 'Content-Type: application/json' \\
   -d '{
     "content": { "message": "ok" },
     "level": "INFO"
-  }'`
-        : null,
-    [ip, projectId],
+  }'`,
+    [projectId],
   )
 
   const { data: curlExample } = useQuery({
