@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { codeToHtml } from 'shiki'
 import { useMemo } from 'react'
 import { RiExternalLinkLine } from '@remixicon/react'
 import type { Project } from 'generated/prisma/browser'
+import { highlightCode } from '@/lib/shiki'
 
 type TypeScriptSDKExampleProps = {
   projectId: Project['id']
@@ -30,10 +30,7 @@ logger.err("Failed to connect to database");`,
   const { data: typeScriptInstallSnippet } = useQuery({
     queryKey: ['projects', projectId, 'examples', 'typeScript', 'install'],
     queryFn: async () => {
-      const html = await codeToHtml(BUN_INSTALL_COMMAND, {
-        lang: 'typescript',
-        theme: 'vitesse-dark',
-      })
+      const html = await highlightCode(BUN_INSTALL_COMMAND, 'typescript')
 
       return html
     },
@@ -52,10 +49,7 @@ logger.err("Failed to connect to database");`,
         return
       }
 
-      const html = await codeToHtml(typeScriptSnippet, {
-        lang: 'typescript',
-        theme: 'vitesse-dark',
-      })
+      const html = await highlightCode(typeScriptSnippet, 'typescript')
 
       return html
     },

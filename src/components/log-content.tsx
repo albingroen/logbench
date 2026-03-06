@@ -3,6 +3,7 @@ import { LogLevel } from 'generated/prisma/browser'
 import { useState } from 'react'
 import { RiClipboardLine } from '@remixicon/react'
 import { toast } from 'sonner'
+import { useQuery } from '@tanstack/react-query'
 import { Switch } from './ui/switch'
 import { Field, FieldLabel } from './ui/field'
 import { Button } from './ui/button'
@@ -11,10 +12,12 @@ import type { JsonObject } from '@visual-json/core'
 import { renderLogContent } from '@/lib/log'
 import { cn, isObject } from '@/lib/utils'
 import { copyToClipboard } from '@/lib/clipboard'
+import { highlightCode } from '@/lib/shiki'
 
 type LogContentProps = {
   content: Log['content']
   level: Log['level']
+  logId: Log['id']
 }
 
 export function LogContentInline({
@@ -39,11 +42,26 @@ export function LogContentInline({
   )
 }
 
-export function LogContentBlock({ content: rawContent }: LogContentProps) {
+export function LogContentBlock({
+  logId,
+  content: rawContent,
+}: LogContentProps) {
+  // Helpers
   const content = renderLogContent(rawContent, false)
-
   const isContentObject = isObject(content)
+
+  // Local state
   const [isRaw, setIsRaw] = useState<boolean>(!isContentObject)
+
+  // Highlight state
+  const { data: highlightedContent, isLoading: isHighlightedCodeLoading } =
+    useQuery({
+      queryKey: [logId, 'raw'],
+      queryFn: () => {
+        return highlightCode(JSON.stringify(content, null, 2), 'json')
+      },
+      enabled: isRaw && isContentObject,
+    })
 
   return (
     <div className="flex flex-col gap-3 pt-4 h-full">
@@ -75,11 +93,18 @@ export function LogContentBlock({ content: rawContent }: LogContentProps) {
 
       <div id="log-content" className="flex-1 overflow-y-auto overscroll-none">
         {isRaw ? (
-          <pre className="bg-muted/50 py-4 px-6 text-xs/relaxed text-balance break-all">
-            {typeof content === 'string'
-              ? content
-              : JSON.stringify(content, null, 2)}
-          </pre>
+          highlightedContent ? (
+            <div
+              className="code-example"
+              dangerouslySetInnerHTML={{ __html: highlightedContent }}
+            />
+          ) : isHighlightedCodeLoading ? null : (
+            <pre className="bg-muted/50 py-4 px-6 text-xs/relaxed text-balance break-all">
+              {typeof content === 'string'
+                ? content
+                : JSON.stringify(content, null, 2)}
+            </pre>
+          )
         ) : (
           <VisualJson value={content as JsonObject}>
             <TreeView showCounts showValues className="bg-muted/50!" />

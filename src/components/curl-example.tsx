@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { codeToHtml } from 'shiki'
 import { useMemo } from 'react'
 import { toast } from 'sonner'
 import { Button } from './ui/button'
 import type { Project } from 'generated/prisma/browser'
 import { copyToClipboard } from '@/lib/clipboard'
+import { highlightCode } from '@/lib/shiki'
 
 type CurlExampleProps = {
   projectId: Project['id']
@@ -31,10 +31,7 @@ export function CurlExample({ projectId }: CurlExampleProps) {
         return
       }
 
-      const html = await codeToHtml(curlCommand, {
-        lang: 'shell',
-        theme: 'vitesse-dark',
-      })
+      const html = highlightCode(curlCommand, 'shell')
 
       return html
     },

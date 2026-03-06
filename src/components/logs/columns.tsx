@@ -35,8 +35,9 @@ export const columns: Array<ColumnDef<Log>> = [
     cell: ({ row }) => {
       return (
         <LogContentInline
-          level={row.getValue('level')}
-          content={row.getValue('content')}
+          logId={row.original.id}
+          level={row.original.level}
+          content={row.original.content}
         />
       )
     },

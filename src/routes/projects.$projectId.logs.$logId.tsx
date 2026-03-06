@@ -111,7 +111,11 @@ function RouteComponent() {
               </TabsList>
 
               <TabsContent value="content" className="flex-1 min-h-0">
-                <LogContentBlock level={log.level} content={log.content} />
+                <LogContentBlock
+                  logId={log.id}
+                  level={log.level}
+                  content={log.content}
+                />
               </TabsContent>
             </Tabs>
 
