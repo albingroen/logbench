@@ -1,3 +1,9 @@
+import { Link } from '@tanstack/react-router'
+
 export function Logo() {
-  return <p className="lowercase text-base font-semibold">Logbench</p>
+  return (
+    <Link to="/" className="lowercase text-base font-semibold">
+      Logbench
+    </Link>
+  )
 }
