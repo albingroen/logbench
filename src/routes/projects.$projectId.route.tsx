@@ -92,8 +92,6 @@ function RouteComponent() {
     if (search) {
       mark.unmark()
       mark.mark(search)
-    } else {
-      mark.unmark()
     }
   }, [search, logs?.length])
 
@@ -149,6 +147,9 @@ function RouteComponent() {
         project={project}
         onChangeSearch={setSearch}
         filteredLogsCount={filteredLogs.length}
+        onClearSearch={() => {
+          mark.unmark()
+        }}
       />
 
       {logs?.length ? (

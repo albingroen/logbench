@@ -30,6 +30,7 @@ import type { Log, Project } from 'generated/prisma/browser'
 
 type ProjectHeaderProps = {
   onChangeSearch: (value: string) => void
+  onClearSearch: () => void
   filteredLogsCount: number
   project: Project
   search: string
@@ -38,6 +39,7 @@ type ProjectHeaderProps = {
 export function ProjectHeader({
   filteredLogsCount,
   onChangeSearch,
+  onClearSearch,
   project,
   search,
 }: ProjectHeaderProps) {
@@ -99,6 +101,10 @@ export function ProjectHeader({
             onChange={(e) => {
               const newValue = e.currentTarget.value
               onChangeSearch(newValue)
+
+              if (!newValue) {
+                onClearSearch()
+              }
             }}
           />
           {search && typeof filteredLogsCount === 'number' && (
@@ -116,6 +122,7 @@ export function ProjectHeader({
                 onClick={() => {
                   onChangeSearch('')
                   focusSearchInput()
+                  onClearSearch()
                 }}
               >
                 <RiCloseLine />
