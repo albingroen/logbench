@@ -1,6 +1,4 @@
-
 <img width="6276" height="3630" alt="CleanShot 2026-03-06 at 23 34 22" src="https://github.com/user-attachments/assets/04447ad0-2704-4243-b088-31ae0b181bb0" />
-
 
 # Logbench
 

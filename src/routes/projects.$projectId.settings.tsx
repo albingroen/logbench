@@ -22,7 +22,6 @@ import {
   FieldLabel,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { Spinner } from '@/components/ui/spinner'
 
 export const Route = createFileRoute('/projects/$projectId/settings')({
   component: RouteComponent,
@@ -139,11 +138,17 @@ function RouteComponent() {
 
             <Field orientation="horizontal" className="justify-end">
               <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting]}
-                children={([canSubmit, isSubmitting]) => (
-                  <Button type="submit" disabled={!canSubmit}>
+                selector={(state) => [
+                  state.canSubmit,
+                  state.isSubmitting,
+                  state.isDirty,
+                ]}
+                children={([canSubmit, isSubmitting, isDirty]) => (
+                  <Button
+                    type="submit"
+                    disabled={!canSubmit || isSubmitting || !isDirty}
+                  >
                     Update project
-                    {isSubmitting && <Spinner />}
                   </Button>
                 )}
               />

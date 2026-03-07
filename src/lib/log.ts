@@ -1,3 +1,4 @@
+import * as z from 'zod'
 import { isObject } from './utils'
 import type { Log } from 'generated/prisma/browser'
 
@@ -15,3 +16,8 @@ export function renderLogContent(
         : value
       : value
 }
+
+export const logSchema = z.object({
+  annotation: z.string().nullable(),
+  isBookmarked: z.boolean().default(false),
+})

@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { LogLevelBadge } from '@/components/log-level'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { AnnotateForm } from '@/components/annotate-form'
 
 export const Route = createFileRoute('/projects/$projectId/logs/$logId')({
   component: RouteComponent,
@@ -78,7 +79,7 @@ function RouteComponent() {
 
   return (
     <Sheet open={isOpen} onOpenChange={handleClose}>
-      <SheetContent>
+      <SheetContent className="focus:outline-none">
         {log ? (
           <>
             <SheetHeader>
@@ -105,16 +106,27 @@ function RouteComponent() {
             <Tabs defaultValue="content" className="h-[calc(100%-112px-96px)]">
               <TabsList variant="line" className="px-3">
                 <TabsTrigger value="content">Content</TabsTrigger>
+                <TabsTrigger value="annotate">
+                  Annotate
+                  {log.annotation && <Badge className="size-1.25 ml-px p-0" />}
+                </TabsTrigger>
                 <TabsTrigger disabled value="metadata">
                   Metadata
                 </TabsTrigger>
               </TabsList>
-
               <TabsContent value="content" className="flex-1 min-h-0">
                 <LogContentBlock
                   logId={log.id}
                   level={log.level}
                   content={log.content}
+                />
+              </TabsContent>
+
+              <TabsContent value="annotate" className="p-4">
+                <AnnotateForm
+                  annotation={log.annotation}
+                  projectId={projectId}
+                  logId={logId}
                 />
               </TabsContent>
             </Tabs>

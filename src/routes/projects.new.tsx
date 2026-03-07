@@ -17,7 +17,6 @@ import {
   FieldLegend,
   FieldSet,
 } from '@/components/ui/field'
-import { Spinner } from '@/components/ui/spinner'
 import { projectSchema } from '@/lib/project'
 
 export const Route = createFileRoute('/projects/new')({
@@ -114,11 +113,17 @@ function RouteComponent() {
 
             <Field orientation="horizontal" className="justify-end">
               <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting]}
-                children={([canSubmit, isSubmitting]) => (
-                  <Button type="submit" disabled={!canSubmit}>
+                selector={(state) => [
+                  state.canSubmit,
+                  state.isSubmitting,
+                  state.isDirty,
+                ]}
+                children={([canSubmit, isSubmitting, isDirty]) => (
+                  <Button
+                    type="submit"
+                    disabled={!canSubmit || isSubmitting || !isDirty}
+                  >
                     Create project
-                    {isSubmitting && <Spinner />}
                   </Button>
                 )}
               />

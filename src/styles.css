@@ -99,7 +99,7 @@
 @layer components {
   .code-example {
     pre {
-      @apply p-4 rounded-md text-sm;
+      @apply p-4 rounded-md text-sm whitespace-pre-wrap;
     }
   }
 }

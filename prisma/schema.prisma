@@ -26,6 +26,7 @@ model Log {
   content      Json
   level        LogLevel @default(INFO)
   isBookmarked Boolean  @default(false)
+  annotation   String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   project      Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
