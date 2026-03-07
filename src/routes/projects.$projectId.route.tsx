@@ -89,31 +89,29 @@ function RouteComponent() {
   const mark = useMemo(() => new Mark('.logs'), [])
 
   useEffect(() => {
-    mark.unmark()
-    mark.mark(search)
+    if (search) {
+      mark.unmark()
+      mark.mark(search)
+    } else {
+      mark.unmark()
+    }
   }, [search, logs?.length])
 
   const filteredLogs = useMemo(() => {
-    if (!logs) {
-      return []
-    }
-
-    if (!search) {
-      return logs
-    }
-
     const lcSearch = search.toLowerCase()
 
-    return logs.filter((log) => {
-      return (
-        log.id.toLowerCase().includes(lcSearch) ||
-        log.projectId?.toLowerCase().includes(lcSearch) ||
-        log.level.includes(lcSearch) ||
-        (log.createdAt as unknown as string).includes(lcSearch) ||
-        (log.updatedAt as unknown as string).includes(lcSearch) ||
-        JSON.stringify(log.content).toLowerCase().includes(lcSearch)
-      )
-    })
+    return (
+      logs?.filter((log) => {
+        return search
+          ? log.id.toLowerCase().includes(lcSearch) ||
+              log.projectId?.toLowerCase().includes(lcSearch) ||
+              log.level.toLowerCase().includes(lcSearch) ||
+              (log.createdAt as unknown as string).includes(lcSearch) ||
+              (log.updatedAt as unknown as string).includes(lcSearch) ||
+              JSON.stringify(log.content).toLowerCase().includes(lcSearch)
+          : true
+      }) ?? []
+    )
   }, [logs, search])
 
   if (isProjectLoading) {

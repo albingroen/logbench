@@ -60,7 +60,7 @@ export function LogContentBlock({
       queryFn: () => {
         return highlightCode(JSON.stringify(content, null, 2), 'json')
       },
-      enabled: isRaw && isContentObject,
+      enabled: isContentObject,
     })
 
   return (

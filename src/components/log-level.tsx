@@ -1,5 +1,9 @@
 import { LogLevel } from 'generated/prisma/enums'
-import { RiErrorWarningFill, RiInformationFill } from '@remixicon/react'
+import {
+  RiAlertFill,
+  RiErrorWarningFill,
+  RiInformationFill,
+} from '@remixicon/react'
 import { Badge } from './ui/badge'
 import type { badgeVariants } from './ui/badge'
 import type { RemixiconComponentType } from '@remixicon/react'
@@ -28,7 +32,7 @@ export const LogLevelMetadata: Record<
     label: 'INFO',
   },
   [LogLevel.WARNING]: {
-    icon: RiErrorWarningFill,
+    icon: RiAlertFill,
     variant: 'warning',
     label: 'WARN',
   },
@@ -40,7 +44,7 @@ export function LogLevelBadge({ level }: LogLevelBadgeProps) {
   return (
     <Badge variant={variant}>
       <Icon />
-      {label}
+      <span>{label}</span>
     </Badge>
   )
 }

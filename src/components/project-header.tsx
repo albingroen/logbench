@@ -1,6 +1,14 @@
-import { RiCloseLine, RiMoreLine, RiSearchLine } from '@remixicon/react'
+import {
+  RiCloseLine,
+  RiForbidLine,
+  RiMoreLine,
+  RiSearchLine,
+} from '@remixicon/react'
 import { useHotkey } from '@tanstack/react-hotkeys'
 import { useRef } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
+import { toast } from 'sonner'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,7 +26,7 @@ import { SidebarTrigger } from './ui/sidebar'
 import { Button } from './ui/button'
 import { ProjectDropdown } from './project-dropdown'
 import { Badge } from './ui/badge'
-import type { Project } from 'generated/prisma/browser'
+import type { Log, Project } from 'generated/prisma/browser'
 
 type ProjectHeaderProps = {
   onChangeSearch: (value: string) => void
@@ -33,6 +41,24 @@ export function ProjectHeader({
   project,
   search,
 }: ProjectHeaderProps) {
+  // Server state
+  const queryClient = useQueryClient()
+
+  const { mutate: deleteLogs } = useMutation({
+    mutationFn: () =>
+      axios
+        .delete<Array<Log>>(`/api/projects/${project.id}/logs`)
+        .then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['projects', project.id, 'logs'],
+      })
+    },
+    onError: () => {
+      toast.error('Failed to clear logs')
+    },
+  })
+
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -100,6 +126,17 @@ export function ProjectHeader({
             <RiSearchLine />
           </InputGroupAddon>
         </InputGroup>
+
+        <Button
+          onClick={() => {
+            deleteLogs()
+          }}
+          type="button"
+          variant="outline"
+        >
+          <RiForbidLine />
+          Clear logs
+        </Button>
 
         <ProjectDropdown project={project}>
           <Button size="icon" variant="ghost">
