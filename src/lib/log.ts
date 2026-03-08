@@ -21,3 +21,9 @@ export const logSchema = z.object({
   annotation: z.string().nullable(),
   isBookmarked: z.boolean().default(false),
 })
+
+export function generateMarkdownLogContent(content: unknown) {
+  return `\`\`\`
+${JSON.stringify(content, null, 2)}
+\`\`\``
+}

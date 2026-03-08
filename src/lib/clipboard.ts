@@ -1,3 +1,5 @@
+import { toast } from 'sonner'
+
 export function copyToClipboard(value: string): Promise<any> {
   try {
     return navigator.clipboard.writeText(value)
@@ -12,4 +14,12 @@ export function copyToClipboard(value: string): Promise<any> {
       res(undefined)
     })
   }
+}
+
+export function copyWithToast(value: string, label = 'Content') {
+  toast.promise(copyToClipboard(value), {
+    loading: 'Loading\u2026',
+    success: `${label} copied to clipboard`,
+    error: `Failed to copy ${label.toLowerCase()} to clipboard`,
+  })
 }

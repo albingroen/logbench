@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { toast } from 'sonner'
 import { Button } from './ui/button'
 import type { Project } from 'generated/prisma/browser'
-import { copyToClipboard } from '@/lib/clipboard'
+import { copyWithToast } from '@/lib/clipboard'
 import { highlightCode } from '@/lib/shiki'
 
 type CurlExampleProps = {
@@ -52,13 +51,7 @@ export function CurlExample({ projectId }: CurlExampleProps) {
       <Button
         type="button"
         variant="outline"
-        onClick={() => {
-          toast.promise(copyToClipboard(curlCommand), {
-            loading: 'Loading...',
-            success: `Command copied to clipboard`,
-            error: 'Failed to copy command to clipboard',
-          })
-        }}
+        onClick={() => copyWithToast(curlCommand, 'Command')}
       >
         Copy command
       </Button>

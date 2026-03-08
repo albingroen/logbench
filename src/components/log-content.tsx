@@ -1,18 +1,30 @@
 import { TreeView, VisualJson } from '@visual-json/react'
 import { LogLevel } from 'generated/prisma/browser'
-import { useState } from 'react'
-import { RiClipboardLine } from '@remixicon/react'
-import { toast } from 'sonner'
+import { useMemo, useState } from 'react'
+import {
+  RiArrowDownSLine,
+  RiClipboardLine,
+  RiCursorAiFill,
+  RiMarkdownFill,
+} from '@remixicon/react'
 import { useQuery } from '@tanstack/react-query'
 import { Switch } from './ui/switch'
 import { Field, FieldLabel } from './ui/field'
 import { Button } from './ui/button'
+import { ButtonGroup } from './ui/button-group'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu'
 import type { Log } from 'generated/prisma/browser'
 import type { JsonObject } from '@visual-json/core'
-import { renderLogContent } from '@/lib/log'
+import { generateMarkdownLogContent, renderLogContent } from '@/lib/log'
 import { cn, isObject } from '@/lib/utils'
-import { copyToClipboard } from '@/lib/clipboard'
+import { copyWithToast } from '@/lib/clipboard'
 import { highlightCode } from '@/lib/shiki'
+import { generateCursorDeeplink } from '@/lib/cursor'
 
 type LogContentProps = {
   content: Log['content']
@@ -49,6 +61,11 @@ export function LogContentBlock({
   // Helpers
   const content = renderLogContent(rawContent, false)
   const isContentObject = isObject(content)
+  const stringifiedContent = useMemo(
+    () =>
+      isContentObject ? JSON.stringify(content, null, 2) : String(content),
+    [content, isContentObject],
+  )
 
   // Local state
   const [isRaw, setIsRaw] = useState<boolean>(!isContentObject)
@@ -57,30 +74,52 @@ export function LogContentBlock({
   const { data: highlightedContent, isLoading: isHighlightedCodeLoading } =
     useQuery({
       queryKey: [logId, 'raw'],
-      queryFn: () => {
-        return highlightCode(JSON.stringify(content, null, 2), 'json')
-      },
+      queryFn: () => highlightCode(stringifiedContent, 'json'),
       enabled: isContentObject,
     })
 
   return (
     <div className="flex flex-col gap-3 pt-4 h-full">
       <div className="flex items-center justify-between px-4">
-        <Button
-          variant="outline"
-          size="sm"
-          type="button"
-          onClick={() => {
-            toast.promise(copyToClipboard(JSON.stringify(content, null, 2)), {
-              loading: 'Loading...',
-              success: `Content copied to clipboard`,
-              error: 'Failed to copy content to clipboard',
-            })
-          }}
-        >
-          <RiClipboardLine />
-          Copy content
-        </Button>
+        <ButtonGroup>
+          <Button
+            variant="outline"
+            size="sm"
+            type="button"
+            onClick={() => copyWithToast(stringifiedContent)}
+          >
+            <RiClipboardLine />
+            Copy content
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon-sm" variant="outline">
+                <RiArrowDownSLine />
+                <span className="sr-only">More</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="min-w-48">
+              <DropdownMenuItem
+                onSelect={() =>
+                  copyWithToast(generateMarkdownLogContent(content))
+                }
+              >
+                <RiMarkdownFill />
+                Copy as Markdown
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => {
+                  window.location.href = generateCursorDeeplink(
+                    generateMarkdownLogContent(content),
+                  )
+                }}
+              >
+                <RiCursorAiFill />
+                Open in Cursor
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </ButtonGroup>
 
         {isContentObject && (
           <Field orientation="horizontal" className="w-fit">
@@ -100,9 +139,7 @@ export function LogContentBlock({
             />
           ) : isHighlightedCodeLoading ? null : (
             <pre className="bg-muted/50 py-4 px-6 text-xs/relaxed text-balance break-all">
-              {typeof content === 'string'
-                ? content
-                : JSON.stringify(content, null, 2)}
+              {stringifiedContent}
             </pre>
           )
         ) : (
