@@ -12,7 +12,10 @@ It gives you a lightweight UI to create projects, stream logs in real time, insp
 - Project-based log organization
 - Real-time log updates via Server-Sent Events (SSE)
 - JSON log payload rendering with level badges
+- Log detail side panel with visual JSON tree and raw syntax-highlighted views
+- Bookmark and annotate individual logs with notes
 - Fast in-table log search with keyboard shortcut (`Cmd/Ctrl + F`)
+- Delete individual logs or bulk clear all logs in a project
 - Local SQLite storage through Prisma
 
 ## Tech Stack
@@ -70,12 +73,16 @@ App runs on `http://localhost:1447`.
 - `GET /api/projects` - list projects
 - `POST /api/projects` - create project (`{ "title": "My Project" }`)
 - `GET /api/projects/:projectId` - get a single project
+- `PUT /api/projects/:projectId` - update a project
+- `DELETE /api/projects/:projectId` - delete a project (cascades to logs)
 
 ### Logs
 
 - `GET /api/projects/:projectId/logs` - list logs for a project (newest first)
 - `GET /api/projects/:projectId/logs/:logId` - get one log
+- `PUT /api/projects/:projectId/logs/:logId` - update a log (bookmark, annotate)
 - `DELETE /api/projects/:projectId/logs/:logId` - delete one log
+- `DELETE /api/projects/:projectId/logs` - delete all logs for a project
 
 ### Ingestion + Live Stream
 
