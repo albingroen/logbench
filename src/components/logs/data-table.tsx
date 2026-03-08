@@ -48,6 +48,19 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
   })
 
+  // Helpers
+  function openLog(row: { original: TData & Log }) {
+    if (!row.original.projectId) return
+    navigate({
+      to: '/projects/$projectId/logs/$logId',
+      params: {
+        projectId: row.original.projectId,
+        logId: row.original.id,
+      },
+      resetScroll: false,
+    })
+  }
+
   // Server state
   const queryClient = useQueryClient()
 
@@ -84,7 +97,7 @@ export function DataTable<TData, TValue>({
                 <TableHead
                   key={header.id}
                   className={cn(
-                    ['w-44 text-muted-foreground', 'w-56', 'w-20', 'w-auto'][i],
+                    ['w-52 text-muted-foreground', 'w-56', 'w-20', 'w-auto'][i],
                   )}
                 >
                   {header.isPlaceholder
@@ -113,19 +126,12 @@ export function DataTable<TData, TValue>({
                       : undefined
                 }
                 data-active={location.pathname.includes(row.original.id)}
-                onClick={() => {
-                  if (!row.original.projectId) {
-                    return
+                onClick={() => openLog(row)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    openLog(row)
                   }
-
-                  navigate({
-                    to: '/projects/$projectId/logs/$logId',
-                    params: {
-                      projectId: row.original.projectId,
-                      logId: row.original.id,
-                    },
-                    resetScroll: false,
-                  })
                 }}
               >
                 {row.getVisibleCells().map((cell, i) => (
@@ -133,7 +139,7 @@ export function DataTable<TData, TValue>({
                     key={cell.id}
                     className={
                       [
-                        'w-44 text-muted-foreground',
+                        'w-52 text-muted-foreground',
                         'w-56 text-muted-foreground',
                         'w-20',
                         'w-auto',

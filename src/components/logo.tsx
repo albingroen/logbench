@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 
 export function Logo() {
   return (
-    <Link to="/">
+    <Link to="/" aria-label="Logbench home">
       <svg
         width="689"
         height="113"

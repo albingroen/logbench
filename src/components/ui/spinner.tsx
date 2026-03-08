@@ -1,7 +1,7 @@
 import { RiLoaderLine } from '@remixicon/react'
 import { cn } from '@/lib/utils'
 
-function Spinner({ className, ...props }: React.ComponentProps<'svg'>) {
+function Spinner({ className, ...props }: Omit<React.ComponentProps<'svg'>, 'children'>) {
   return (
     <RiLoaderLine
       role="status"

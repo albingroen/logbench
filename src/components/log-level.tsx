@@ -43,7 +43,7 @@ export function LogLevelBadge({ level }: LogLevelBadgeProps) {
 
   return (
     <Badge variant={variant}>
-      <Icon />
+      <Icon aria-hidden="true" />
       <span>{label}</span>
     </Badge>
   )

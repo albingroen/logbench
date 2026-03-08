@@ -94,6 +94,11 @@
   html {
     @apply font-sans overscroll-none;
   }
+  button,
+  a,
+  [role='button'] {
+    touch-action: manipulation;
+  }
 }
 
 @layer components {

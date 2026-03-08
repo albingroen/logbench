@@ -97,7 +97,7 @@ export function ProjectHeader({
           <InputGroupInput
             value={search}
             ref={searchInputRef}
-            placeholder="Search logs..."
+            placeholder="Search logs…"
             onChange={(e) => {
               const newValue = e.currentTarget.value
               onChangeSearch(newValue)
@@ -146,7 +146,7 @@ export function ProjectHeader({
         </Button>
 
         <ProjectDropdown project={project}>
-          <Button size="icon" variant="ghost">
+          <Button size="icon" variant="ghost" aria-label="Project menu">
             <RiMoreLine />
           </Button>
         </ProjectDropdown>

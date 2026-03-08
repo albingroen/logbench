@@ -23,6 +23,10 @@ export const Route = createRootRoute({
       {
         title: 'Logbench',
       },
+      {
+        name: 'theme-color',
+        content: '#222222',
+      },
     ],
     links: [
       {

@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { format, formatDistanceToNowStrict } from 'date-fns'
+import { formatDateTime, formatRelativeTime } from '@/lib/utils'
 import { toast } from 'sonner'
 import { RiBookmarkFill } from '@remixicon/react'
 import type { Log } from 'generated/prisma/browser'
@@ -84,20 +84,18 @@ function RouteComponent() {
           <>
             <SheetHeader>
               <SheetTitle>
-                {format(log.createdAt, 'yyyy-MM-dd HH:mm:ss')}
+                {formatDateTime(log.createdAt)}
               </SheetTitle>
               <div className="flex items-center gap-1.5 mt-1.5">
                 {log.isBookmarked && (
                   <Badge variant="warning">
                     <RiBookmarkFill />
-                    Bookmarkd
+                    Bookmarked
                   </Badge>
                 )}
                 <LogLevelBadge level={log.level} />
                 <Badge variant="outline">
-                  {formatDistanceToNowStrict(log.createdAt, {
-                    addSuffix: true,
-                  })}
+                  {formatRelativeTime(log.createdAt)}
                 </Badge>
                 <Badge variant="outline">ID: {log.id}</Badge>
               </div>
@@ -150,8 +148,8 @@ function RouteComponent() {
           </>
         ) : (
           <SheetHeader>
-            <SheetTitle>Loading...</SheetTitle>
-            <SheetDescription>Loading...</SheetDescription>
+            <SheetTitle>Loading…</SheetTitle>
+            <SheetDescription>Loading…</SheetDescription>
           </SheetHeader>
         )}
       </SheetContent>

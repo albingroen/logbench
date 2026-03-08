@@ -104,7 +104,7 @@ export function AnnotateForm({
                   autoComplete="off"
                   aria-invalid={isInvalid}
                   onBlur={field.handleBlur}
-                  placeholder="This log is..."
+                  placeholder="This log is…"
                   value={field.state.value ?? ''}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onKeyDown={(e) => {

@@ -1,8 +1,8 @@
-import { format } from 'date-fns'
 import { LogContentInline } from '../log-content'
 import { LogLevelBadge } from '../log-level'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { Log } from 'generated/prisma/browser'
+import { formatDateTime } from '@/lib/utils'
 
 export const columns: Array<ColumnDef<Log>> = [
   {
@@ -10,9 +10,8 @@ export const columns: Array<ColumnDef<Log>> = [
     header: 'Time',
     cell: ({ row }) => {
       const createdAt = row.getValue<Date>('createdAt')
-      const formatted = format(createdAt, 'yyyy-MM-dd HH:mm:ss')
 
-      return <span>{formatted}</span>
+      return <span className="tabular-nums">{formatDateTime(createdAt)}</span>
     },
   },
   {
