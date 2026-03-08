@@ -26,15 +26,16 @@ bun run check                  # Format + lint fix combined
 
 **Frontend** uses TanStack Router (file-based routing in `src/routes/`), TanStack React Query for data fetching/caching, and EventSource for real-time SSE updates.
 
-**Backend** API routes are colocated in `src/routes/api.*` using TanStack Start server functions. Request validation uses Zod schemas defined in `src/lib/`.
+**Backend** uses TanStack Start server functions (`createServerFn`) defined in `src/lib/server/` for all CRUD operations. These are called directly from React components — no HTTP client or REST routes needed. Request validation uses Zod schemas defined in `src/lib/`.
 
-**Real-time flow:** The ingest endpoint (`api.projects.$projectId.logs.ingest.ts`) handles both POST (create log) and GET with `?stream=1` (SSE subscription). An in-memory `Map<string, Set<Client>>` tracks subscribers per project. On log creation, the server publishes to all subscribers, and the frontend updates the React Query cache directly without refetching.
+**Real-time flow:** The ingest endpoint (`api.projects.$projectId.logs.ingest.ts`) is the only traditional API route, handling both POST (create log) and GET with `?stream=1` (SSE subscription). An in-memory `Map<string, Set<Client>>` tracks subscribers per project. On log creation, the server publishes to all subscribers, and the frontend updates the React Query cache directly without refetching.
 
 **Database:** Two models — `Project` and `Log` (with cascade delete). Schema in `prisma/schema.prisma`. SQLite file at `dev.db`.
 
 ## Key Directories
 
-- `src/routes/` — File-based routes (pages) and API endpoints (`api.*` files)
+- `src/routes/` — File-based routes (pages) and the ingest API endpoint
+- `src/lib/server/` — TanStack Start server functions for CRUD operations (projects, logs)
 - `src/components/ui/` — shadcn/ui base components
 - `src/components/` — Feature components (sidebar, log table, log content viewer, etc.)
 - `src/lib/` — Prisma client, Zod schemas, utilities, syntax highlighting setup

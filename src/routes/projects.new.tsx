@@ -1,10 +1,8 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from '@tanstack/react-form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 import { toast } from 'sonner'
-import type { ProjectCreateInput } from 'generated/prisma/models'
-import type { Project } from 'generated/prisma/browser'
+import { createProject as createProjectFn } from '@/lib/server/projects'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { NewProjectHeader } from '@/components/new-project-header'
@@ -31,8 +29,7 @@ function RouteComponent() {
   const queryClient = useQueryClient()
 
   const { mutateAsync: createProject } = useMutation({
-    mutationFn: (body: ProjectCreateInput) =>
-      axios.post<Project>('/api/projects', body).then((res) => res.data),
+    mutationFn: (body: { title: string }) => createProjectFn({ data: body }),
     onSuccess: (res) => {
       toast.success('Project created')
       queryClient.invalidateQueries({

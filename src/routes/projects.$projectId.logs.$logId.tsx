@@ -1,11 +1,10 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
-import { formatDateTime, formatRelativeTime } from '@/lib/utils'
 import { toast } from 'sonner'
 import { RiBookmarkFill } from '@remixicon/react'
-import type { Log } from 'generated/prisma/browser'
+import { formatDateTime, formatRelativeTime } from '@/lib/utils'
+import { deleteLog as deleteLogFn, getLog as getLogFn } from '@/lib/server/logs'
 import {
   Sheet,
   SheetClose,
@@ -39,17 +38,11 @@ function RouteComponent() {
 
   const { data: log } = useQuery({
     queryKey: ['projects', projectId, 'logs', logId],
-    queryFn: () =>
-      axios
-        .get<Log>(`/api/projects/${projectId}/logs/${logId}`)
-        .then((res) => res.data),
+    queryFn: () => getLogFn({ data: { logId } }),
   })
 
   const { mutate: deleteLog } = useMutation({
-    mutationFn: () =>
-      axios
-        .delete<Log>(`/api/projects/${projectId}/logs/${logId}`)
-        .then((res) => res.data),
+    mutationFn: () => deleteLogFn({ data: { logId } }),
     onSuccess: () => {
       toast.success('Log deleted')
       queryClient.invalidateQueries({
@@ -83,9 +76,7 @@ function RouteComponent() {
         {log ? (
           <>
             <SheetHeader>
-              <SheetTitle>
-                {formatDateTime(log.createdAt)}
-              </SheetTitle>
+              <SheetTitle>{formatDateTime(log.createdAt)}</SheetTitle>
               <div className="flex items-center gap-1.5 mt-1.5">
                 {log.isBookmarked && (
                   <Badge variant="warning">
@@ -121,11 +112,7 @@ function RouteComponent() {
               </TabsContent>
 
               <TabsContent value="annotate" className="p-4">
-                <AnnotateForm
-                  annotation={log.annotation}
-                  projectId={projectId}
-                  logId={logId}
-                />
+                <AnnotateForm annotation={log.annotation} logId={logId} />
               </TabsContent>
             </Tabs>
 

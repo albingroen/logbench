@@ -1,6 +1,5 @@
 <img width="5596" height="3630" alt="CleanShot 2026-03-07 at 15 44 27" src="https://github.com/user-attachments/assets/c9a00f6d-4060-4c7f-993a-ee41ffc35139" />
 
-
 # Logbench
 
 Logbench is a local log viewer and ingestion service built with TanStack Start, React, and Prisma + SQLite.
@@ -66,25 +65,18 @@ App runs on `http://localhost:1447`.
 - `bun run format` - run Prettier
 - `bun run check` - run Prettier write + ESLint fix
 
-## API Endpoints
+## API
 
-### Projects
+### Server Functions
 
-- `GET /api/projects` - list projects
-- `POST /api/projects` - create project (`{ "title": "My Project" }`)
-- `GET /api/projects/:projectId` - get a single project
-- `PUT /api/projects/:projectId` - update a project
-- `DELETE /api/projects/:projectId` - delete a project (cascades to logs)
+Internal data operations (CRUD for projects and logs) use [TanStack Start server functions](https://tanstack.com/start) instead of REST endpoints. These are defined in `src/lib/server/` and called directly from React components — no HTTP client needed.
 
-### Logs
-
-- `GET /api/projects/:projectId/logs` - list logs for a project (newest first)
-- `GET /api/projects/:projectId/logs/:logId` - get one log
-- `PUT /api/projects/:projectId/logs/:logId` - update a log (bookmark, annotate)
-- `DELETE /api/projects/:projectId/logs/:logId` - delete one log
-- `DELETE /api/projects/:projectId/logs` - delete all logs for a project
+- `src/lib/server/projects.ts` — `getProjects`, `getProject`, `createProject`, `updateProject`, `deleteProject`
+- `src/lib/server/logs.ts` — `getLogs`, `getLog`, `updateLog`, `deleteLog`, `deleteLogs`
 
 ### Ingestion + Live Stream
+
+The ingest endpoint is the only traditional API route, used for external log ingestion:
 
 - `POST /api/projects/:projectId/logs/ingest` - ingest a log payload (`{ "content": ... }`)
 - `GET /api/projects/:projectId/logs/ingest?stream=1` - subscribe to SSE events

@@ -1,10 +1,10 @@
 import { createContext, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 import { toast } from 'sonner'
 import type { Project } from 'generated/prisma/browser'
 import type { ProjectWithLogsCount } from '../types'
 import type { ReactNode } from 'react'
+import { deleteProject as deleteProjectFn } from '@/lib/server/projects'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,16 +44,13 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
 
   const { mutate: deleteProject } = useMutation({
     mutationFn: (projectId: Project['id']) =>
-      axios
-        .delete<Project>(`/api/projects/${projectId}`)
-        .then((res) => res.data),
-    onSuccess: (res) => {
+      deleteProjectFn({ data: { projectId } }),
+    onSuccess: () => {
       toast.success('Project deleted')
       setIsDeletingProject(false)
 
       queryClient.invalidateQueries({
-        predicate: (query) =>
-          query.queryKey[0] === 'projects' || query.queryKey[1] === res.id,
+        queryKey: ['projects'],
       })
 
       setTimeout(() => {

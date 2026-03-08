@@ -30,7 +30,6 @@
     "@tanstack/router-plugin": "^1.132.0",
     "@visual-json/core": "^0.1.0",
     "@visual-json/react": "^0.1.0",
-    "axios": "^1.13.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",

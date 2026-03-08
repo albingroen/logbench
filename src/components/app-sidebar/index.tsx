@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { Link, useLocation } from '@tanstack/react-router'
 import { RiAddLine, RiBox1Line, RiMoreLine } from '@remixicon/react'
 import { useQuery } from '@tanstack/react-query'
@@ -7,7 +6,7 @@ import { Logo } from '../logo'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { ProjectDropdown } from '../project-dropdown'
 import { ProjectSearch } from './partials/project-search'
-import type { ProjectWithLogsCount } from '@/lib/types'
+import { getProjects } from '@/lib/server/projects'
 import {
   Sidebar,
   SidebarContent,
@@ -33,10 +32,7 @@ export function AppSidebar() {
   // Server state
   const { data: projects } = useQuery({
     queryKey: ['projects'],
-    queryFn: () =>
-      axios
-        .get<Array<ProjectWithLogsCount>>('/api/projects')
-        .then((res) => res.data),
+    queryFn: () => getProjects(),
   })
 
   // Helpers

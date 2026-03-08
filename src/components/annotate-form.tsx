@@ -1,6 +1,5 @@
 import { useForm } from '@tanstack/react-form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 import { toast } from 'sonner'
 import {
   InputGroup,
@@ -9,43 +8,27 @@ import {
   InputGroupTextarea,
 } from './ui/input-group'
 import { Field, FieldDescription, FieldError, FieldLabel } from './ui/field'
-import type { Log, Project } from 'generated/prisma/browser'
-import type { LogUpdateInput } from 'generated/prisma/models'
+import type { Log } from 'generated/prisma/browser'
+import { updateLog as updateLogFn } from '@/lib/server/logs'
 import { logSchema } from '@/lib/log'
 
 type AnnotateFormProps = {
   annotation: Log['annotation']
-  projectId: Project['id']
   logId: Log['id']
 }
 
-export function AnnotateForm({
-  annotation,
-  projectId,
-  logId,
-}: AnnotateFormProps) {
+export function AnnotateForm({ annotation, logId }: AnnotateFormProps) {
   // Server state
   const queryClient = useQueryClient()
 
   const { mutateAsync: updateLog } = useMutation({
-    mutationFn: (body: LogUpdateInput) =>
-      axios
-        .put<Log>(`/api/projects/${projectId}/logs/${logId}`, body)
-        .then((res) => res.data),
+    mutationFn: (body: {
+      annotation?: string | null
+      isBookmarked?: boolean
+    }) => updateLogFn({ data: { logId, data: body } }),
     onSuccess: (res) => {
       queryClient.invalidateQueries({
         queryKey: ['projects', res.projectId, 'logs'],
-      })
-
-      queryClient.invalidateQueries({
-        predicate: (query) =>
-          (query.queryKey[0] === 'projects' &&
-            query.queryKey[1] === projectId &&
-            query.queryKey[2] === 'logs') ||
-          (query.queryKey[0] === 'projects' &&
-            query.queryKey[1] === projectId &&
-            query.queryKey[2] === 'logs' &&
-            query.queryKey[3] === logId),
       })
 
       toast.success('Annotation saved')

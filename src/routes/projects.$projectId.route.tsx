@@ -1,10 +1,11 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 import { RiArrowRightLine, RiBox1Line } from '@remixicon/react'
 import Mark from 'mark.js'
-import type { Log, Project } from 'generated/prisma/browser'
+import type { Log } from 'generated/prisma/browser'
+import { getProject as getProjectFn } from '@/lib/server/projects'
+import { getLogs as getLogsFn } from '@/lib/server/logs'
 import { ProjectHeader } from '@/components/project-header'
 import { Logs } from '@/components/logs'
 import {
@@ -32,8 +33,7 @@ function RouteComponent() {
   // Server state
   const { data: project, isLoading: isProjectLoading } = useQuery({
     queryKey: ['projects', projectId],
-    queryFn: () =>
-      axios.get<Project>(`/api/projects/${projectId}`).then((res) => res.data),
+    queryFn: () => getProjectFn({ data: { projectId } }),
   })
 
   const logsQueryKey = useMemo(
@@ -45,10 +45,7 @@ function RouteComponent() {
 
   const { data: logs, isLoading: isLogsLoading } = useQuery({
     queryKey: logsQueryKey,
-    queryFn: () =>
-      axios
-        .get<Array<Log>>(`/api/projects/${projectId}/logs`)
-        .then((res) => res.data),
+    queryFn: () => getLogsFn({ data: { projectId } }),
   })
 
   // Side-effects

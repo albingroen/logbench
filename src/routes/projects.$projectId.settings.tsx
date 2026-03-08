@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 import { toast } from 'sonner'
 import { useForm } from '@tanstack/react-form'
 import { useState } from 'react'
-import type { Project } from 'generated/prisma/browser'
-import type { ProjectUpdateInput } from 'generated/prisma/models'
+import {
+  getProject as getProjectFn,
+  updateProject as updateProjectFn,
+} from '@/lib/server/projects'
 import {
   Dialog,
   DialogContent,
@@ -40,15 +41,12 @@ function RouteComponent() {
 
   const { data: project } = useQuery({
     queryKey: ['projects', projectId],
-    queryFn: () =>
-      axios.get<Project>(`/api/projects/${projectId}`).then((res) => res.data),
+    queryFn: () => getProjectFn({ data: { projectId } }),
   })
 
   const { mutateAsync: updateProject } = useMutation({
-    mutationFn: (body: ProjectUpdateInput) =>
-      axios
-        .put<Project>(`/api/projects/${projectId}`, body)
-        .then((res) => res.data),
+    mutationFn: (body: { title: string }) =>
+      updateProjectFn({ data: { projectId, data: body } }),
     onSuccess: (res) => {
       toast.success('Project updated')
       queryClient.invalidateQueries({
@@ -62,7 +60,7 @@ function RouteComponent() {
       })
     },
     onError: () => {
-      toast.error('Failed to create project')
+      toast.error('Failed to update project')
     },
   })
 

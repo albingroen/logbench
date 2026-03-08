@@ -7,7 +7,6 @@ import {
 import { useHotkey } from '@tanstack/react-hotkeys'
 import { useRef } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 import { toast } from 'sonner'
 import {
   Breadcrumb,
@@ -26,7 +25,8 @@ import { SidebarTrigger } from './ui/sidebar'
 import { Button } from './ui/button'
 import { ProjectDropdown } from './project-dropdown'
 import { Badge } from './ui/badge'
-import type { Log, Project } from 'generated/prisma/browser'
+import type { Project } from 'generated/prisma/browser'
+import { deleteLogs as deleteLogsFn } from '@/lib/server/logs'
 
 type ProjectHeaderProps = {
   onChangeSearch: (value: string) => void
@@ -47,10 +47,7 @@ export function ProjectHeader({
   const queryClient = useQueryClient()
 
   const { mutate: deleteLogs } = useMutation({
-    mutationFn: () =>
-      axios
-        .delete<Array<Log>>(`/api/projects/${project.id}/logs`)
-        .then((res) => res.data),
+    mutationFn: () => deleteLogsFn({ data: { projectId: project.id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['projects', project.id, 'logs'],

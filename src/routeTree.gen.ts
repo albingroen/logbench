@@ -11,14 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsNewRouteImport } from './routes/projects.new'
-import { Route as ApiProjectsRouteImport } from './routes/api.projects'
 import { Route as ProjectsProjectIdRouteRouteImport } from './routes/projects.$projectId.route'
 import { Route as ProjectsProjectIdSettingsRouteImport } from './routes/projects.$projectId.settings'
-import { Route as ApiProjectsProjectIdRouteImport } from './routes/api.projects.$projectId'
 import { Route as ProjectsProjectIdLogsLogIdRouteImport } from './routes/projects.$projectId.logs.$logId'
-import { Route as ApiProjectsProjectIdLogsRouteImport } from './routes/api.projects.$projectId.logs'
 import { Route as ApiProjectsProjectIdLogsIngestRouteImport } from './routes/api.projects.$projectId.logs.ingest'
-import { Route as ApiProjectsProjectIdLogsLogIdRouteImport } from './routes/api.projects.$projectId.logs.$logId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,11 +24,6 @@ const IndexRoute = IndexRouteImport.update({
 const ProjectsNewRoute = ProjectsNewRouteImport.update({
   id: '/projects/new',
   path: '/projects/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiProjectsRoute = ApiProjectsRouteImport.update({
-  id: '/api/projects',
-  path: '/api/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsProjectIdRouteRoute = ProjectsProjectIdRouteRouteImport.update({
@@ -46,71 +37,42 @@ const ProjectsProjectIdSettingsRoute =
     path: '/settings',
     getParentRoute: () => ProjectsProjectIdRouteRoute,
   } as any)
-const ApiProjectsProjectIdRoute = ApiProjectsProjectIdRouteImport.update({
-  id: '/$projectId',
-  path: '/$projectId',
-  getParentRoute: () => ApiProjectsRoute,
-} as any)
 const ProjectsProjectIdLogsLogIdRoute =
   ProjectsProjectIdLogsLogIdRouteImport.update({
     id: '/logs/$logId',
     path: '/logs/$logId',
     getParentRoute: () => ProjectsProjectIdRouteRoute,
   } as any)
-const ApiProjectsProjectIdLogsRoute =
-  ApiProjectsProjectIdLogsRouteImport.update({
-    id: '/logs',
-    path: '/logs',
-    getParentRoute: () => ApiProjectsProjectIdRoute,
-  } as any)
 const ApiProjectsProjectIdLogsIngestRoute =
   ApiProjectsProjectIdLogsIngestRouteImport.update({
-    id: '/ingest',
-    path: '/ingest',
-    getParentRoute: () => ApiProjectsProjectIdLogsRoute,
-  } as any)
-const ApiProjectsProjectIdLogsLogIdRoute =
-  ApiProjectsProjectIdLogsLogIdRouteImport.update({
-    id: '/$logId',
-    path: '/$logId',
-    getParentRoute: () => ApiProjectsProjectIdLogsRoute,
+    id: '/api/projects/$projectId/logs/ingest',
+    path: '/api/projects/$projectId/logs/ingest',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/projects/$projectId': typeof ProjectsProjectIdRouteRouteWithChildren
-  '/api/projects': typeof ApiProjectsRouteWithChildren
   '/projects/new': typeof ProjectsNewRoute
-  '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
   '/projects/$projectId/settings': typeof ProjectsProjectIdSettingsRoute
-  '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
-  '/api/projects/$projectId/logs/$logId': typeof ApiProjectsProjectIdLogsLogIdRoute
   '/api/projects/$projectId/logs/ingest': typeof ApiProjectsProjectIdLogsIngestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/projects/$projectId': typeof ProjectsProjectIdRouteRouteWithChildren
-  '/api/projects': typeof ApiProjectsRouteWithChildren
   '/projects/new': typeof ProjectsNewRoute
-  '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
   '/projects/$projectId/settings': typeof ProjectsProjectIdSettingsRoute
-  '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
-  '/api/projects/$projectId/logs/$logId': typeof ApiProjectsProjectIdLogsLogIdRoute
   '/api/projects/$projectId/logs/ingest': typeof ApiProjectsProjectIdLogsIngestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/projects/$projectId': typeof ProjectsProjectIdRouteRouteWithChildren
-  '/api/projects': typeof ApiProjectsRouteWithChildren
   '/projects/new': typeof ProjectsNewRoute
-  '/api/projects/$projectId': typeof ApiProjectsProjectIdRouteWithChildren
   '/projects/$projectId/settings': typeof ProjectsProjectIdSettingsRoute
-  '/api/projects/$projectId/logs': typeof ApiProjectsProjectIdLogsRouteWithChildren
   '/projects/$projectId/logs/$logId': typeof ProjectsProjectIdLogsLogIdRoute
-  '/api/projects/$projectId/logs/$logId': typeof ApiProjectsProjectIdLogsLogIdRoute
   '/api/projects/$projectId/logs/ingest': typeof ApiProjectsProjectIdLogsIngestRoute
 }
 export interface FileRouteTypes {
@@ -118,45 +80,33 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/projects/$projectId'
-    | '/api/projects'
     | '/projects/new'
-    | '/api/projects/$projectId'
     | '/projects/$projectId/settings'
-    | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
-    | '/api/projects/$projectId/logs/$logId'
     | '/api/projects/$projectId/logs/ingest'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/projects/$projectId'
-    | '/api/projects'
     | '/projects/new'
-    | '/api/projects/$projectId'
     | '/projects/$projectId/settings'
-    | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
-    | '/api/projects/$projectId/logs/$logId'
     | '/api/projects/$projectId/logs/ingest'
   id:
     | '__root__'
     | '/'
     | '/projects/$projectId'
-    | '/api/projects'
     | '/projects/new'
-    | '/api/projects/$projectId'
     | '/projects/$projectId/settings'
-    | '/api/projects/$projectId/logs'
     | '/projects/$projectId/logs/$logId'
-    | '/api/projects/$projectId/logs/$logId'
     | '/api/projects/$projectId/logs/ingest'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProjectsProjectIdRouteRoute: typeof ProjectsProjectIdRouteRouteWithChildren
-  ApiProjectsRoute: typeof ApiProjectsRouteWithChildren
   ProjectsNewRoute: typeof ProjectsNewRoute
+  ApiProjectsProjectIdLogsIngestRoute: typeof ApiProjectsProjectIdLogsIngestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -175,13 +125,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/projects': {
-      id: '/api/projects'
-      path: '/api/projects'
-      fullPath: '/api/projects'
-      preLoaderRoute: typeof ApiProjectsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/projects/$projectId': {
       id: '/projects/$projectId'
       path: '/projects/$projectId'
@@ -196,13 +139,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsProjectIdSettingsRouteImport
       parentRoute: typeof ProjectsProjectIdRouteRoute
     }
-    '/api/projects/$projectId': {
-      id: '/api/projects/$projectId'
-      path: '/$projectId'
-      fullPath: '/api/projects/$projectId'
-      preLoaderRoute: typeof ApiProjectsProjectIdRouteImport
-      parentRoute: typeof ApiProjectsRoute
-    }
     '/projects/$projectId/logs/$logId': {
       id: '/projects/$projectId/logs/$logId'
       path: '/logs/$logId'
@@ -210,26 +146,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsProjectIdLogsLogIdRouteImport
       parentRoute: typeof ProjectsProjectIdRouteRoute
     }
-    '/api/projects/$projectId/logs': {
-      id: '/api/projects/$projectId/logs'
-      path: '/logs'
-      fullPath: '/api/projects/$projectId/logs'
-      preLoaderRoute: typeof ApiProjectsProjectIdLogsRouteImport
-      parentRoute: typeof ApiProjectsProjectIdRoute
-    }
     '/api/projects/$projectId/logs/ingest': {
       id: '/api/projects/$projectId/logs/ingest'
-      path: '/ingest'
+      path: '/api/projects/$projectId/logs/ingest'
       fullPath: '/api/projects/$projectId/logs/ingest'
       preLoaderRoute: typeof ApiProjectsProjectIdLogsIngestRouteImport
-      parentRoute: typeof ApiProjectsProjectIdLogsRoute
-    }
-    '/api/projects/$projectId/logs/$logId': {
-      id: '/api/projects/$projectId/logs/$logId'
-      path: '/$logId'
-      fullPath: '/api/projects/$projectId/logs/$logId'
-      preLoaderRoute: typeof ApiProjectsProjectIdLogsLogIdRouteImport
-      parentRoute: typeof ApiProjectsProjectIdLogsRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -250,50 +172,11 @@ const ProjectsProjectIdRouteRouteWithChildren =
     ProjectsProjectIdRouteRouteChildren,
   )
 
-interface ApiProjectsProjectIdLogsRouteChildren {
-  ApiProjectsProjectIdLogsLogIdRoute: typeof ApiProjectsProjectIdLogsLogIdRoute
-  ApiProjectsProjectIdLogsIngestRoute: typeof ApiProjectsProjectIdLogsIngestRoute
-}
-
-const ApiProjectsProjectIdLogsRouteChildren: ApiProjectsProjectIdLogsRouteChildren =
-  {
-    ApiProjectsProjectIdLogsLogIdRoute: ApiProjectsProjectIdLogsLogIdRoute,
-    ApiProjectsProjectIdLogsIngestRoute: ApiProjectsProjectIdLogsIngestRoute,
-  }
-
-const ApiProjectsProjectIdLogsRouteWithChildren =
-  ApiProjectsProjectIdLogsRoute._addFileChildren(
-    ApiProjectsProjectIdLogsRouteChildren,
-  )
-
-interface ApiProjectsProjectIdRouteChildren {
-  ApiProjectsProjectIdLogsRoute: typeof ApiProjectsProjectIdLogsRouteWithChildren
-}
-
-const ApiProjectsProjectIdRouteChildren: ApiProjectsProjectIdRouteChildren = {
-  ApiProjectsProjectIdLogsRoute: ApiProjectsProjectIdLogsRouteWithChildren,
-}
-
-const ApiProjectsProjectIdRouteWithChildren =
-  ApiProjectsProjectIdRoute._addFileChildren(ApiProjectsProjectIdRouteChildren)
-
-interface ApiProjectsRouteChildren {
-  ApiProjectsProjectIdRoute: typeof ApiProjectsProjectIdRouteWithChildren
-}
-
-const ApiProjectsRouteChildren: ApiProjectsRouteChildren = {
-  ApiProjectsProjectIdRoute: ApiProjectsProjectIdRouteWithChildren,
-}
-
-const ApiProjectsRouteWithChildren = ApiProjectsRoute._addFileChildren(
-  ApiProjectsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProjectsProjectIdRouteRoute: ProjectsProjectIdRouteRouteWithChildren,
-  ApiProjectsRoute: ApiProjectsRouteWithChildren,
   ProjectsNewRoute: ProjectsNewRoute,
+  ApiProjectsProjectIdLogsIngestRoute: ApiProjectsProjectIdLogsIngestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

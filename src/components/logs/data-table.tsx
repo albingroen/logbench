@@ -6,7 +6,6 @@ import {
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { RiBookmarkFill, RiBookmarkLine } from '@remixicon/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 import { toast } from 'sonner'
 import {
   ContextMenu,
@@ -16,8 +15,8 @@ import {
 } from '../ui/context-menu'
 import type { ColumnDef } from '@tanstack/react-table'
 
-import type { Log, Project } from 'generated/prisma/browser'
-import type { LogUpdateInput } from 'generated/prisma/models'
+import type { Log } from 'generated/prisma/browser'
+import { updateLog as updateLogFn } from '@/lib/server/logs'
 import {
   Table,
   TableBody,
@@ -66,17 +65,12 @@ export function DataTable<TData, TValue>({
 
   const { mutate: updateLog } = useMutation({
     mutationFn: ({
-      projectId,
       logId,
       body,
     }: {
-      projectId: Project['id']
       logId: Log['id']
-      body: LogUpdateInput
-    }) =>
-      axios
-        .put<Log>(`/api/projects/${projectId}/logs/${logId}`, body)
-        .then((res) => res.data),
+      body: { annotation?: string | null; isBookmarked?: boolean }
+    }) => updateLogFn({ data: { logId, data: body } }),
     onSuccess: (res) => {
       queryClient.invalidateQueries({
         queryKey: ['projects', res.projectId, 'logs'],
@@ -160,7 +154,6 @@ export function DataTable<TData, TValue>({
                     }
 
                     updateLog({
-                      projectId: row.original.projectId,
                       logId: row.original.id,
                       body: {
                         isBookmarked: false,
@@ -179,7 +172,6 @@ export function DataTable<TData, TValue>({
                     }
 
                     updateLog({
-                      projectId: row.original.projectId,
                       logId: row.original.id,
                       body: {
                         isBookmarked: true,
