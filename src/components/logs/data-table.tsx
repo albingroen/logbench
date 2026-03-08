@@ -91,7 +91,7 @@ export function DataTable<TData, TValue>({
                 <TableHead
                   key={header.id}
                   className={cn(
-                    ['w-52 text-muted-foreground', 'w-56', 'w-20', 'w-auto'][i],
+                    ['w-52 text-muted-foreground', 'w-20', 'w-auto'][i],
                   )}
                 >
                   {header.isPlaceholder
@@ -132,12 +132,7 @@ export function DataTable<TData, TValue>({
                   <TableCell
                     key={cell.id}
                     className={
-                      [
-                        'w-52 text-muted-foreground',
-                        'w-56 text-muted-foreground',
-                        'w-20',
-                        'w-auto',
-                      ][i]
+                      ['w-52 text-muted-foreground', 'w-20', 'w-auto'][i]
                     }
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

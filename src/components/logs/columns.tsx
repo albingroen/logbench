@@ -15,13 +15,6 @@ export const columns: Array<ColumnDef<Log>> = [
     },
   },
   {
-    accessorKey: 'id',
-    header: 'ID',
-    cell: ({ row }) => {
-      return <span>{row.getValue('id')}</span>
-    },
-  },
-  {
     header: 'Type',
     accessorKey: 'level',
     cell: ({ row }) => {
