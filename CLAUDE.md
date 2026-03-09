@@ -28,13 +28,15 @@ bun run check                  # Format + lint fix combined
 
 **Backend** uses TanStack Start server functions (`createServerFn`) defined in `src/lib/server/` for all CRUD operations. These are called directly from React components — no HTTP client or REST routes needed. Request validation uses Zod schemas defined in `src/lib/`.
 
-**Real-time flow:** The ingest endpoint (`api.projects.$projectId.logs.ingest.ts`) is the only traditional API route, handling both POST (create log) and GET with `?stream=1` (SSE subscription). An in-memory `Map<string, Set<Client>>` tracks subscribers per project. On log creation, the server publishes to all subscribers, and the frontend updates the React Query cache directly without refetching.
+**Real-time flow:** The ingest endpoint (`api.projects.$projectId.logs.ingest.ts`) handles both POST (create log) and GET with `?stream=1` (SSE subscription). An in-memory `Map<string, Set<Client>>` tracks subscribers per project. On log creation, the server publishes to all subscribers, and the frontend updates the React Query cache directly without refetching.
+
+**MCP server:** A local MCP endpoint at `POST /mcp` (`src/routes/mcp.ts`) exposes read-only tools (`get_projects`, `get_project`, `get_logs`, `get_log`) for AI assistants. Uses `@modelcontextprotocol/sdk` with Streamable HTTP transport, localhost-only access.
 
 **Database:** Two models — `Project` and `Log` (with cascade delete). Schema in `prisma/schema.prisma`. SQLite file at `dev.db`.
 
 ## Key Directories
 
-- `src/routes/` — File-based routes (pages) and the ingest API endpoint
+- `src/routes/` — File-based routes (pages), the ingest API endpoint, and the MCP server
 - `src/lib/server/` — TanStack Start server functions for CRUD operations (projects, logs)
 - `src/components/ui/` — shadcn/ui base components
 - `src/components/` — Feature components (sidebar, log table, log content viewer, etc.)

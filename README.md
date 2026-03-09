@@ -16,6 +16,7 @@ It gives you a lightweight UI to create projects, stream logs in real time, insp
 - Fast in-table log search with keyboard shortcut (`Cmd/Ctrl + F`)
 - Delete individual logs or bulk clear all logs in a project
 - Local SQLite storage through Prisma
+- MCP server for AI assistant integration
 
 ## Tech Stack
 
@@ -129,6 +130,36 @@ logger.err('Request failed', {
 ```
 
 Errors from the HTTP call are silently caught so logging never crashes your application.
+
+## MCP Server
+
+Logbench exposes a local [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server at `POST /mcp`, allowing AI assistants like Claude to read your projects and logs directly.
+
+### Available Tools
+
+| Tool | Description |
+|------|-------------|
+| `get_projects` | List all projects with log counts |
+| `get_project` | Get a single project by ID |
+| `get_logs` | List logs for a project (latest 100) |
+| `get_log` | Get a single log by ID |
+
+### Configuration
+
+Add the following to your MCP client config (e.g. Claude Code `~/.claude.json` or Cursor settings):
+
+```json
+{
+  "mcpServers": {
+    "logbench": {
+      "type": "url",
+      "url": "http://localhost:1447/mcp"
+    }
+  }
+}
+```
+
+The MCP endpoint is localhost-only and rejects requests from non-local origins.
 
 ## Notes
 
