@@ -21,9 +21,14 @@ import { copyWithToast } from '@/lib/clipboard'
 type ProjectDropdownProps = {
   children: ReactNode
   project: ProjectWithLogsCount | Project
+  align: 'start' | 'end'
 }
 
-export function ProjectDropdown({ children, project }: ProjectDropdownProps) {
+export function ProjectDropdown({
+  children,
+  project,
+  align = 'start',
+}: ProjectDropdownProps) {
   // Context
   const { setDeletingProject, setIsDeletingProject } =
     useContext(ProjectContext)
@@ -31,7 +36,7 @@ export function ProjectDropdown({ children, project }: ProjectDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="min-w-48">
+      <DropdownMenuContent className="min-w-48" align={align}>
         <DropdownMenuItem
           onSelect={() =>
             copyWithToast(

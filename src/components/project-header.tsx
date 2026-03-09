@@ -142,7 +142,7 @@ export function ProjectHeader({
           Clear logs
         </Button>
 
-        <ProjectDropdown project={project}>
+        <ProjectDropdown align="end" project={project}>
           <Button size="icon" variant="ghost" aria-label="Project menu">
             <RiMoreLine />
           </Button>
