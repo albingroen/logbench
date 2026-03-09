@@ -130,7 +130,7 @@ export function LogContentBlock({
         )}
       </div>
 
-      <div id="log-content" className="flex-1 overflow-y-auto overscroll-none">
+      <div id="log-content" className="flex-1 overflow-y-auto">
         {isRaw ? (
           highlightedContent ? (
             <div

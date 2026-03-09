@@ -137,12 +137,12 @@ Logbench exposes a local [Model Context Protocol](https://modelcontextprotocol.i
 
 ### Available Tools
 
-| Tool | Description |
-|------|-------------|
-| `get_projects` | List all projects with log counts |
-| `get_project` | Get a single project by ID |
-| `get_logs` | List logs for a project (latest 100) |
-| `get_log` | Get a single log by ID |
+| Tool           | Description                          |
+| -------------- | ------------------------------------ |
+| `get_projects` | List all projects with log counts    |
+| `get_project`  | Get a single project by ID           |
+| `get_logs`     | List logs for a project (latest 100) |
+| `get_log`      | Get a single log by ID               |
 
 ### Configuration
 

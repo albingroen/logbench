@@ -89,10 +89,10 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply font-sans bg-background text-foreground antialiased overscroll-none;
+    @apply font-sans bg-background text-foreground antialiased;
   }
   html {
-    @apply font-sans overscroll-none;
+    @apply font-sans;
   }
   button,
   a,
