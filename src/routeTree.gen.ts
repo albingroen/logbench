@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsNewRouteImport } from './routes/projects.new'
 import { Route as ProjectsProjectIdRouteRouteImport } from './routes/projects.$projectId.route'
@@ -16,6 +17,11 @@ import { Route as ProjectsProjectIdSettingsRouteImport } from './routes/projects
 import { Route as ProjectsProjectIdLogsLogIdRouteImport } from './routes/projects.$projectId.logs.$logId'
 import { Route as ApiProjectsProjectIdLogsIngestRouteImport } from './routes/api.projects.$projectId.logs.ingest'
 
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -52,6 +58,7 @@ const ApiProjectsProjectIdLogsIngestRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/mcp': typeof McpRoute
   '/projects/$projectId': typeof ProjectsProjectIdRouteRouteWithChildren
   '/projects/new': typeof ProjectsNewRoute
   '/projects/$projectId/settings': typeof ProjectsProjectIdSettingsRoute
@@ -60,6 +67,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/mcp': typeof McpRoute
   '/projects/$projectId': typeof ProjectsProjectIdRouteRouteWithChildren
   '/projects/new': typeof ProjectsNewRoute
   '/projects/$projectId/settings': typeof ProjectsProjectIdSettingsRoute
@@ -69,6 +77,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/mcp': typeof McpRoute
   '/projects/$projectId': typeof ProjectsProjectIdRouteRouteWithChildren
   '/projects/new': typeof ProjectsNewRoute
   '/projects/$projectId/settings': typeof ProjectsProjectIdSettingsRoute
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/mcp'
     | '/projects/$projectId'
     | '/projects/new'
     | '/projects/$projectId/settings'
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/mcp'
     | '/projects/$projectId'
     | '/projects/new'
     | '/projects/$projectId/settings'
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/mcp'
     | '/projects/$projectId'
     | '/projects/new'
     | '/projects/$projectId/settings'
@@ -104,6 +116,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  McpRoute: typeof McpRoute
   ProjectsProjectIdRouteRoute: typeof ProjectsProjectIdRouteRouteWithChildren
   ProjectsNewRoute: typeof ProjectsNewRoute
   ApiProjectsProjectIdLogsIngestRoute: typeof ApiProjectsProjectIdLogsIngestRoute
@@ -111,6 +124,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -174,6 +194,7 @@ const ProjectsProjectIdRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  McpRoute: McpRoute,
   ProjectsProjectIdRouteRoute: ProjectsProjectIdRouteRouteWithChildren,
   ProjectsNewRoute: ProjectsNewRoute,
   ApiProjectsProjectIdLogsIngestRoute: ApiProjectsProjectIdLogsIngestRoute,

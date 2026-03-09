@@ -55,7 +55,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <AppSidebar />
                 <SidebarInset>{children}</SidebarInset>
               </ProjectProvider>
-              <Toaster richColors closeButton={false} position="bottom-right" />
+              <Toaster
+                richColors
+                theme="dark"
+                closeButton={false}
+                position="bottom-right"
+              />
             </SidebarProvider>
           </TooltipProvider>
         </QueryClientProvider>
