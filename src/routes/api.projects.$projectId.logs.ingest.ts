@@ -5,6 +5,8 @@ import { prisma } from '@/lib/prisma'
 const bodySchema = z.object({
   content: z.any(),
   level: z.enum(['INFO', 'WARNING', 'ERROR']).optional(),
+  isBookmarked: z.boolean().optional(),
+  annotation: z.string().optional(),
 })
 
 type Client = ReadableStreamDefaultController<Uint8Array>
@@ -91,6 +93,8 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
               value: parsed.data.content,
             },
             level: parsed.data.level,
+            isBookmarked: parsed.data.isBookmarked,
+            annotation: parsed.data.annotation,
             project: {
               connect: {
                 id: params.projectId,

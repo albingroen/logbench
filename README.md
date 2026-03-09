@@ -79,7 +79,7 @@ Internal data operations (CRUD for projects and logs) use [TanStack Start server
 
 The ingest endpoint is the only traditional API route, used for external log ingestion:
 
-- `POST /api/projects/:projectId/logs/ingest` - ingest a log payload (`{ "content": ... }`)
+- `POST /api/projects/:projectId/logs/ingest` - ingest a log payload (`{ "content": ..., "level?": ..., "isBookmarked?": ..., "annotation?": ... }`)
 - `GET /api/projects/:projectId/logs/ingest?stream=1` - subscribe to SSE events
 
 Example ingest request:
@@ -87,7 +87,7 @@ Example ingest request:
 ```bash
 curl -X POST "http://localhost:1447/api/projects/<projectId>/logs/ingest" \
   -H "Content-Type: application/json" \
-  -d '{"content":{"message":"Hello from curl","level":"INFO"}}'
+  -d '{"content":{"message":"Hello from curl"},"level":"INFO","isBookmarked":true,"annotation":"my note"}'
 ```
 
 ## JavaScript SDK

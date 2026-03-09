@@ -18,7 +18,9 @@ export function CurlExample({ projectId }: CurlExampleProps) {
   -H 'Content-Type: application/json' \\
   -d '{
     "content": { "message": "ok" },
-    "level": "INFO"
+    "level": "INFO",
+    "isBookmarked": true,
+    "annotation": "my note"
   }'`,
     [projectId],
   )
