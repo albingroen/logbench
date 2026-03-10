@@ -142,6 +142,7 @@ function RouteComponent() {
       <ProjectHeader
         search={search}
         project={project}
+        logs={filteredLogs}
         onChangeSearch={setSearch}
         filteredLogsCount={filteredLogs.length}
         onClearSearch={() => {

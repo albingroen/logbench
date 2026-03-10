@@ -1,5 +1,6 @@
 import {
   RiCloseLine,
+  RiFileCopyLine,
   RiForbidLine,
   RiMoreLine,
   RiSearchLine,
@@ -25,10 +26,13 @@ import { SidebarTrigger } from './ui/sidebar'
 import { Button } from './ui/button'
 import { ProjectDropdown } from './project-dropdown'
 import { Badge } from './ui/badge'
-import type { Project } from 'generated/prisma/browser'
+import type { Log, Project } from 'generated/prisma/browser'
 import { deleteLogs as deleteLogsFn } from '@/lib/server/logs'
+import { copyWithToast } from '@/lib/clipboard'
+import { renderLogContent } from '@/lib/log'
 
 type ProjectHeaderProps = {
+  logs: Array<Log>
   onChangeSearch: (value: string) => void
   onClearSearch: () => void
   filteredLogsCount: number
@@ -38,6 +42,7 @@ type ProjectHeaderProps = {
 
 export function ProjectHeader({
   filteredLogsCount,
+  logs,
   onChangeSearch,
   onClearSearch,
   project,
@@ -64,6 +69,11 @@ export function ProjectHeader({
   // Helpers
   function focusSearchInput() {
     searchInputRef.current?.focus()
+  }
+
+  function copyLogs() {
+    const values = logs.map((log) => renderLogContent(log.content, false))
+    copyWithToast(JSON.stringify(values, null, 2), 'Logs')
   }
 
   // Keyboard shortcuts
@@ -140,6 +150,17 @@ export function ProjectHeader({
         >
           <RiForbidLine />
           Clear logs
+        </Button>
+
+        <Button
+          onClick={() => {
+            copyLogs()
+          }}
+          type="button"
+          variant="outline"
+        >
+          <RiFileCopyLine />
+          Copy logs
         </Button>
 
         <ProjectDropdown align="end" project={project}>
