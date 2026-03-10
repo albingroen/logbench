@@ -69,7 +69,10 @@ function createMcpServer() {
     'Get a single log by ID',
     { logId: z.string() },
     async ({ logId }) => {
-      const log = await prisma.log.findUnique({ where: { id: logId } })
+      const log = await prisma.log.findUnique({
+        where: { id: logId },
+        include: { source: { include: { sourceFile: true } } },
+      })
       if (!log) {
         return {
           content: [{ type: 'text', text: 'Log not found' }],

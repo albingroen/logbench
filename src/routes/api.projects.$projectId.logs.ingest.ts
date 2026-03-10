@@ -7,6 +7,13 @@ const bodySchema = z.object({
   level: z.enum(['INFO', 'WARNING', 'ERROR']).optional(),
   isBookmarked: z.boolean().optional(),
   annotation: z.string().optional(),
+  source: z
+    .object({
+      fileName: z.string(),
+      lineNumber: z.number().int(),
+      columnNumber: z.number().int().optional(),
+    })
+    .optional(),
 })
 
 type Client = ReadableStreamDefaultController<Uint8Array>
@@ -87,6 +94,22 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
           })
         }
 
+        const sourceFile = parsed.data.source
+          ? await prisma.sourceFile.upsert({
+              where: {
+                fileName_projectId: {
+                  fileName: parsed.data.source.fileName,
+                  projectId: params.projectId,
+                },
+              },
+              create: {
+                fileName: parsed.data.source.fileName,
+                projectId: params.projectId,
+              },
+              update: {},
+            })
+          : null
+
         const log = await prisma.log.create({
           data: {
             content: {
@@ -100,6 +123,15 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
                 id: params.projectId,
               },
             },
+            source: sourceFile
+              ? {
+                  create: {
+                    lineNumber: parsed.data.source!.lineNumber,
+                    columnNumber: parsed.data.source!.columnNumber,
+                    sourceFileId: sourceFile.id,
+                  },
+                }
+              : undefined,
           },
         })
 

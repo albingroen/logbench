@@ -22,6 +22,7 @@ export const getLog = createServerFn({ method: 'GET' })
       where: {
         id: data.logId,
       },
+      include: { source: { include: { sourceFile: true } } },
     })
   })
 

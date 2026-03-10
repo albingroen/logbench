@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import { LogLevelBadge } from '@/components/log-level'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AnnotateForm } from '@/components/annotate-form'
+import { LogSource } from '@/components/log-source'
 
 export const Route = createFileRoute('/projects/$projectId/logs/$logId')({
   component: RouteComponent,
@@ -90,6 +91,8 @@ function RouteComponent() {
                 </Badge>
                 <Badge variant="outline">ID: {log.id}</Badge>
               </div>
+
+              {log.source && <LogSource source={log.source} />}
             </SheetHeader>
 
             <Tabs defaultValue="content" className="h-[calc(100%-112px-96px)]">
