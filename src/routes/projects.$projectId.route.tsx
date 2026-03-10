@@ -66,7 +66,11 @@ function RouteComponent() {
 
           const queryData = queryClient.getQueryData<Array<Log>>(logsQueryKey)
           queryClient.setQueryData(logsQueryKey, [
-            msg.log,
+            {
+              ...msg.log,
+              createdAt: new Date(msg.log.createdAt),
+              updatedAt: new Date(msg.log.updatedAt),
+            },
             ...(queryData || []),
           ])
         }
@@ -101,8 +105,8 @@ function RouteComponent() {
           ? log.id.toLowerCase().includes(lcSearch) ||
               log.projectId?.toLowerCase().includes(lcSearch) ||
               log.level.toLowerCase().includes(lcSearch) ||
-              (log.createdAt as unknown as string).includes(lcSearch) ||
-              (log.updatedAt as unknown as string).includes(lcSearch) ||
+              log.createdAt.toISOString().includes(lcSearch) ||
+              log.updatedAt.toISOString().includes(lcSearch) ||
               JSON.stringify(log.content).toLowerCase().includes(lcSearch)
           : true
       }) ?? []
