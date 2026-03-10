@@ -17,7 +17,6 @@ export function TypeScriptSDKExample({ projectId }: TypeScriptSDKExampleProps) {
       `import { Logbench } from "logbench-js";
 
 const logger = new Logbench({
-  url: import.meta.env.VITE_LOGBENCH_URL, // → ${window.location.origin}
   projectId: import.meta.env.VITE_LOGBENCH_PROJECT_ID // → "${projectId}"
 });
 

@@ -14,6 +14,7 @@ bunx prisma generate           # Generate Prisma client (run after schema change
 bunx prisma db push            # Create/update database schema
 bun run dev                    # Start dev server (http://localhost:1447)
 bun run build                  # Production build
+bun run start                  # Run production build (PORT=1447 node .output/server/index.mjs)
 bun run test                   # Run Vitest tests
 bun run lint                   # ESLint
 bun run format                 # Prettier

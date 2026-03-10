@@ -60,6 +60,7 @@ App runs on `http://localhost:1447`.
 
 - `bun run dev` - start local dev server
 - `bun run build` - build production bundle
+- `bun run start` - run production build (`PORT=1447 node .output/server/index.mjs`)
 - `bun run preview` - preview production build
 - `bun run test` - run Vitest test suite
 - `bun run lint` - run ESLint
@@ -97,11 +98,11 @@ The official JavaScript/TypeScript SDK is available as [`logbench-js`](https://w
 ### Install
 
 ```bash
-bun add logbench-js
+bun add -D logbench-js
 ```
 
 ```bash
-npm install logbench-js
+npm install -D logbench-js
 ```
 
 ### Usage
@@ -110,7 +111,6 @@ npm install logbench-js
 import { Logbench } from 'logbench-js'
 
 const logger = new Logbench({
-  url: 'http://localhost:1447',
   projectId: 'your-project-id',
 })
 

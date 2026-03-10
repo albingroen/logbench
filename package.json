@@ -8,6 +8,7 @@
     "dev": "vite dev --port 1447",
     "build": "vite build",
     "preview": "vite preview --port 1447",
+    "start": "PORT=1447 node .output/server/index.mjs",
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier --write .",
