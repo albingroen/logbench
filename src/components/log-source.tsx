@@ -1,4 +1,5 @@
-import { RiClipboardLine, RiFile2Fill, RiMore2Line } from '@remixicon/react'
+import { RiClipboardLine, RiMore2Line } from '@remixicon/react'
+import { FileIcon } from './file-icon'
 import { Card, CardContent, CardHeader } from './ui/card'
 import { Button } from './ui/button'
 import { ButtonGroup } from './ui/button-group'
@@ -25,8 +26,10 @@ export function LogSource({
   source: { sourceFile, lineNumber, columnNumber },
 }: LogSourceProps) {
   const lineCol = [lineNumber, columnNumber].filter((v) => v != null).join(':')
-  const baseName = sourceFile?.fileName.split('/').at(-1)
-  const dirName = sourceFile?.fileName.split('/').slice(0, -1).join('/')
+  const parts = sourceFile?.fileName.split('/')
+  const baseName = parts?.at(-1)
+  const dirName = parts?.slice(0, -1).join('/')
+  const extension = baseName?.split('.').at(-1)
 
   return (
     <Card className="mt-4 p-0 gap-0">
@@ -35,7 +38,10 @@ export function LogSource({
       </CardHeader>
       <CardContent className="flex flex-col gap-3 p-3.5">
         <div className="flex items-start gap-1.5">
-          <RiFile2Fill className="size-3.5 text-dim-foreground" />
+          <FileIcon
+            extension={extension}
+            className="size-3.5 text-dim-foreground"
+          />
           <div className="flex items-end gap-2 flex-1">
             <div className="flex flex-col gap-2 flex-1">
               <p className="text-sm font-mono leading-none">
