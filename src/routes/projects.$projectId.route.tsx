@@ -1,5 +1,5 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { RiArrowRightLine, RiBox1Line } from '@remixicon/react'
 import Mark from 'mark.js'
@@ -29,6 +29,9 @@ function RouteComponent() {
 
   // Local state
   const [search, setSearch] = useState<string>('')
+
+  // Refs
+  const markRef = useRef<Mark | null>(null)
 
   // Server state
   const { data: project, isLoading: isProjectLoading } = useQuery({
@@ -86,16 +89,15 @@ function RouteComponent() {
     return () => eventSource.close()
   }, [projectId])
 
-  // Helpers
-  const mark = useMemo(() => new Mark('.logs'), [])
-
   useEffect(() => {
+    if (!markRef.current) markRef.current = new Mark('.logs')
     if (search) {
-      mark.unmark()
-      mark.mark(search)
+      markRef.current.unmark()
+      markRef.current.mark(search)
     }
   }, [search, logs?.length])
 
+  // Helpers
   const filteredLogs = useMemo(() => {
     const lcSearch = search.toLowerCase()
 
@@ -150,7 +152,7 @@ function RouteComponent() {
         onChangeSearch={setSearch}
         filteredLogsCount={filteredLogs.length}
         onClearSearch={() => {
-          mark.unmark()
+          markRef.current?.unmark()
         }}
       />
 
