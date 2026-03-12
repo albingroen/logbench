@@ -95,7 +95,7 @@ function RouteComponent() {
               {log.source && <LogSource source={log.source} />}
             </SheetHeader>
 
-            <Tabs defaultValue="content" className="h-[calc(100%-112px-96px)]">
+            <Tabs defaultValue="content" className="flex-1 min-h-0">
               <TabsList variant="line" className="px-3">
                 <TabsTrigger value="content">Content</TabsTrigger>
                 <TabsTrigger value="annotate">
