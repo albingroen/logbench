@@ -12,6 +12,7 @@ export const getLogs = createServerFn({ method: 'GET' })
       orderBy: {
         createdAt: 'desc',
       },
+      include: { source: { include: { sourceFile: true } } },
     })
   })
 

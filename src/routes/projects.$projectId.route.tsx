@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { RiArrowRightLine, RiBox1Line } from '@remixicon/react'
 import Mark from 'mark.js'
-import type { Log } from 'generated/prisma/browser'
+import type { Log, SourceFile } from 'generated/prisma/browser'
 import { getProject as getProjectFn } from '@/lib/server/projects'
 import { getLogs as getLogsFn } from '@/lib/server/logs'
 import { ProjectHeader } from '@/components/project-header'
@@ -29,6 +29,8 @@ function RouteComponent() {
 
   // Local state
   const [search, setSearch] = useState<string>('')
+  const [selectedSourceFile, setSelectedSourceFile] =
+    useState<SourceFile | null>(null)
 
   // Refs
   const markRef = useRef<Mark | null>(null)
@@ -98,22 +100,43 @@ function RouteComponent() {
   }, [search, logs?.length])
 
   // Helpers
+  const sourceFiles = useMemo(() => {
+    const seen = new Set<string>()
+    return (logs ?? []).flatMap((log) => {
+      const sf = log.source?.sourceFile
+      if (!sf || seen.has(sf.id)) return []
+      seen.add(sf.id)
+      return [sf]
+    })
+  }, [logs])
+
+  const logContentStrings = useMemo(
+    () => new Map(logs?.map((log) => [log.id, JSON.stringify(log.content).toLowerCase()]) ?? []),
+    [logs],
+  )
+
   const filteredLogs = useMemo(() => {
     const lcSearch = search.toLowerCase()
 
     return (
       logs?.filter((log) => {
-        return search
+        const matchesSearch = search
           ? log.id.toLowerCase().includes(lcSearch) ||
-              log.projectId?.toLowerCase().includes(lcSearch) ||
-              log.level.toLowerCase().includes(lcSearch) ||
-              log.createdAt.toISOString().includes(lcSearch) ||
-              log.updatedAt.toISOString().includes(lcSearch) ||
-              JSON.stringify(log.content).toLowerCase().includes(lcSearch)
+            log.projectId?.toLowerCase().includes(lcSearch) ||
+            log.level.toLowerCase().includes(lcSearch) ||
+            log.createdAt.toISOString().includes(lcSearch) ||
+            log.updatedAt.toISOString().includes(lcSearch) ||
+            logContentStrings.get(log.id)?.includes(lcSearch)
           : true
+
+        const matchesSourceFile = selectedSourceFile
+          ? log.source?.sourceFile.id === selectedSourceFile.id
+          : true
+
+        return matchesSearch && matchesSourceFile
       }) ?? []
     )
-  }, [logs, search])
+  }, [logs, search, selectedSourceFile])
 
   if (isProjectLoading) {
     return null
@@ -154,6 +177,9 @@ function RouteComponent() {
         onClearSearch={() => {
           markRef.current?.unmark()
         }}
+        sourceFiles={sourceFiles}
+        selectedSourceFile={selectedSourceFile}
+        onChangeSourceFile={setSelectedSourceFile}
       />
 
       {logs?.length ? (

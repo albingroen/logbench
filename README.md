@@ -14,6 +14,7 @@ It gives you a lightweight UI to create projects, stream logs in real time, insp
 - Log detail side panel with visual JSON tree and raw syntax-highlighted views
 - Bookmark and annotate individual logs with notes
 - Fast in-table log search with keyboard shortcut (`Cmd/Ctrl + F`)
+- Source file filter — filter logs by originating source file
 - Delete individual logs or bulk clear all logs in a project
 - Local SQLite storage through Prisma
 - MCP server for AI assistant integration

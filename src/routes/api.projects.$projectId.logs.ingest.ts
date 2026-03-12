@@ -28,7 +28,7 @@ function publish(projectId: string, event: unknown) {
     try {
       client.enqueue(payload)
     } catch {
-      // connection closed, will be cleaned on next write or cancel
+      clients.delete(client)
     }
   }
 }
@@ -56,7 +56,8 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
           cancel() {
             const clients = subscribersByProject.get(projectId)
             if (!clients) return
-            // controller reference is lost; we prune dead clients on next publish
+            clients.delete(controller)
+            if (clients.size === 0) subscribersByProject.delete(projectId)
           },
         })
 
@@ -133,6 +134,7 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
                 }
               : undefined,
           },
+          include: { source: { include: { sourceFile: true } } },
         })
 
         publish(params.projectId, { type: 'log.created', log })

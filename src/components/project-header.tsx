@@ -1,6 +1,7 @@
 import {
   RiCloseLine,
   RiFileCopyLine,
+  RiFilterLine,
   RiForbidLine,
   RiMoreLine,
   RiSearchLine,
@@ -20,13 +21,21 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
+  InputGroupText,
 } from './ui/input-group'
 import { Separator } from './ui/separator'
 import { SidebarTrigger } from './ui/sidebar'
 import { Button } from './ui/button'
 import { ProjectDropdown } from './project-dropdown'
-import { Badge } from './ui/badge'
-import type { Log, Project } from 'generated/prisma/browser'
+import { LogSourceFile } from './log-source-file'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu'
+import { LogSourceFileBadge } from './log-source-file-badge'
+import type { Log, Project, SourceFile } from 'generated/prisma/browser'
 import { deleteLogs as deleteLogsFn } from '@/lib/server/logs'
 import { copyWithToast } from '@/lib/clipboard'
 import { renderLogContent } from '@/lib/log'
@@ -38,6 +47,9 @@ type ProjectHeaderProps = {
   filteredLogsCount: number
   project: Project
   search: string
+  sourceFiles: Array<SourceFile>
+  selectedSourceFile: SourceFile | null
+  onChangeSourceFile: (sourceFile: SourceFile | null) => void
 }
 
 export function ProjectHeader({
@@ -47,6 +59,9 @@ export function ProjectHeader({
   onClearSearch,
   project,
   search,
+  sourceFiles,
+  selectedSourceFile,
+  onChangeSourceFile,
 }: ProjectHeaderProps) {
   // Server state
   const queryClient = useQueryClient()
@@ -67,6 +82,8 @@ export function ProjectHeader({
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   // Helpers
+  const hasAppliedFilter = search || selectedSourceFile
+
   function focusSearchInput() {
     searchInputRef.current?.focus()
   }
@@ -101,6 +118,10 @@ export function ProjectHeader({
       </div>
       <div className="flex-1 flex gap-2.5">
         <InputGroup className="flex-1">
+          <InputGroupAddon align="inline-start">
+            <RiSearchLine />
+          </InputGroupAddon>
+
           <InputGroupInput
             value={search}
             ref={searchInputRef}
@@ -114,14 +135,49 @@ export function ProjectHeader({
               }
             }}
           />
-          {search && typeof filteredLogsCount === 'number' && (
+
+          <InputGroupAddon align="inline-end">
+            <InputGroupText>
+              {filteredLogsCount.toLocaleString()} log(s)
+            </InputGroupText>
+          </InputGroupAddon>
+
+          {selectedSourceFile && (
             <InputGroupAddon align="inline-end">
-              <Badge variant="secondary">
-                {filteredLogsCount.toLocaleString()} log(s)
-              </Badge>
+              <LogSourceFileBadge sourceFile={selectedSourceFile} />
             </InputGroupAddon>
           )}
-          {search && (
+
+          {sourceFiles.length > 0 && (
+            <InputGroupAddon align="inline-end">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <InputGroupButton
+                    size="icon-xs"
+                    type="button"
+                    aria-label="Filter"
+                  >
+                    <RiFilterLine />
+                  </InputGroupButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {sourceFiles.map((sf) => (
+                    <DropdownMenuCheckboxItem
+                      key={sf.id}
+                      checked={selectedSourceFile?.id === sf.id}
+                      onCheckedChange={(checked) => {
+                        onChangeSourceFile(checked ? sf : null)
+                      }}
+                    >
+                      <LogSourceFile sourceFile={sf} />
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </InputGroupAddon>
+          )}
+
+          {hasAppliedFilter && (
             <InputGroupAddon align="inline-end">
               <InputGroupButton
                 size="icon-xs"
@@ -130,15 +186,13 @@ export function ProjectHeader({
                   onChangeSearch('')
                   focusSearchInput()
                   onClearSearch()
+                  onChangeSourceFile(null)
                 }}
               >
                 <RiCloseLine />
               </InputGroupButton>
             </InputGroupAddon>
           )}
-          <InputGroupAddon align="inline-end">
-            <RiSearchLine />
-          </InputGroupAddon>
         </InputGroup>
 
         <Button
