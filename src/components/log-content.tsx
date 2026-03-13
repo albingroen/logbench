@@ -57,8 +57,34 @@ type LogContentProps = {
 export function LogContentInline({
   content: rawContent,
   level,
+  logId,
 }: LogContentProps) {
-  const content = renderLogContent(rawContent)
+  const content = renderLogContent(rawContent, false)
+  const stringifiedContent = useMemo(
+    () => (isObject(content) ? JSON.stringify(content) : null),
+    [content],
+  )
+
+  const { data: highlightedContent } = useQuery({
+    queryKey: [logId, 'raw-inline'],
+    queryFn: () => highlightCode(stringifiedContent!, 'json'),
+    enabled: stringifiedContent !== null,
+  })
+
+  if (stringifiedContent !== null) {
+    return highlightedContent ? (
+      <div
+        className="code-example-inline"
+        dangerouslySetInnerHTML={{ __html: highlightedContent }}
+      />
+    ) : (
+      <div className="code-example-inline opacity-0">
+        <pre>
+          <code>{stringifiedContent}</code>
+        </pre>
+      </div>
+    )
+  }
 
   return (
     <span
@@ -71,7 +97,7 @@ export function LogContentInline({
         }[level],
       )}
     >
-      {content}
+      {String(content)}
     </span>
   )
 }
@@ -86,7 +112,7 @@ export function LogContentBlock({
   const stringifiedContent = useMemo(
     () =>
       isContentObject ? JSON.stringify(content, null, 2) : String(content),
-    [content, isContentObject],
+    [content],
   )
 
   // Local state

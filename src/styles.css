@@ -109,6 +109,16 @@
       @apply p-4 rounded-md text-sm whitespace-pre-wrap;
     }
   }
+
+  .code-example-inline {
+    pre {
+      @apply bg-transparent! text-xs/relaxed rounded-md whitespace-pre-wrap;
+
+      code {
+        @apply line-clamp-10;
+      }
+    }
+  }
 }
 
 mark {
