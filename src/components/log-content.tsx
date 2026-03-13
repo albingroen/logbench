@@ -6,6 +6,7 @@ import {
   RiClipboardLine,
   RiCursorAiFill,
   RiMarkdownFill,
+  RiOpenaiFill,
 } from '@remixicon/react'
 import { useQuery } from '@tanstack/react-query'
 import { Switch } from './ui/switch'
@@ -25,6 +26,27 @@ import { cn, isObject } from '@/lib/utils'
 import { copyWithToast } from '@/lib/clipboard'
 import { highlightCode } from '@/lib/shiki'
 import { generateCursorDeeplink } from '@/lib/cursor'
+import { generateZedDeeplink } from '@/lib/zed'
+import { generateCodexDeeplink } from '@/lib/codex'
+import { ZedIcon } from '@/components/icons'
+
+const ideIntegrations = [
+  {
+    label: 'Add to chat in Cursor',
+    icon: <RiCursorAiFill />,
+    generateDeeplink: generateCursorDeeplink,
+  },
+  {
+    label: 'Add to chat in Zed',
+    icon: <ZedIcon />,
+    generateDeeplink: generateZedDeeplink,
+  },
+  {
+    label: 'Add to chat in Codex',
+    icon: <RiOpenaiFill />,
+    generateDeeplink: generateCodexDeeplink,
+  },
+]
 
 type LogContentProps = {
   content: Log['content']
@@ -107,16 +129,19 @@ export function LogContentBlock({
                 <RiMarkdownFill />
                 Copy as Markdown
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => {
-                  window.location.href = generateCursorDeeplink(
-                    generateMarkdownLogContent(content),
-                  )
-                }}
-              >
-                <RiCursorAiFill />
-                Open in Cursor
-              </DropdownMenuItem>
+              {ideIntegrations.map(({ label, icon, generateDeeplink }) => (
+                <DropdownMenuItem
+                  key={label}
+                  onSelect={() => {
+                    window.location.href = generateDeeplink(
+                      generateMarkdownLogContent(content),
+                    )
+                  }}
+                >
+                  {icon}
+                  {label}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </ButtonGroup>

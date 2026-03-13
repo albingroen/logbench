@@ -111,7 +111,13 @@ function RouteComponent() {
   }, [logs])
 
   const logContentStrings = useMemo(
-    () => new Map(logs?.map((log) => [log.id, JSON.stringify(log.content).toLowerCase()]) ?? []),
+    () =>
+      new Map(
+        logs?.map((log) => [
+          log.id,
+          JSON.stringify(log.content).toLowerCase(),
+        ]) ?? [],
+      ),
     [logs],
   )
 
