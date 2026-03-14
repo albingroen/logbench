@@ -43,7 +43,6 @@ import { renderLogContent } from '@/lib/log'
 type ProjectHeaderProps = {
   logs: Array<Log>
   onChangeSearch: (value: string) => void
-  onClearSearch: () => void
   filteredLogsCount: number
   project: Project
   search: string
@@ -56,7 +55,6 @@ export function ProjectHeader({
   filteredLogsCount,
   logs,
   onChangeSearch,
-  onClearSearch,
   project,
   search,
   sourceFiles,
@@ -129,10 +127,6 @@ export function ProjectHeader({
             onChange={(e) => {
               const newValue = e.currentTarget.value
               onChangeSearch(newValue)
-
-              if (!newValue) {
-                onClearSearch()
-              }
             }}
           />
 
@@ -185,7 +179,6 @@ export function ProjectHeader({
                 onClick={() => {
                   onChangeSearch('')
                   focusSearchInput()
-                  onClearSearch()
                   onChangeSourceFile(null)
                 }}
               >

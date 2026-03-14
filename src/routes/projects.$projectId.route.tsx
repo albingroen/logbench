@@ -1,8 +1,7 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { RiArrowRightLine, RiBox1Line } from '@remixicon/react'
-import Mark from 'mark.js'
 import type { Log, SourceFile } from 'generated/prisma/browser'
 import { getProject as getProjectFn } from '@/lib/server/projects'
 import { getLogs as getLogsFn } from '@/lib/server/logs'
@@ -31,9 +30,6 @@ function RouteComponent() {
   const [search, setSearch] = useState<string>('')
   const [selectedSourceFile, setSelectedSourceFile] =
     useState<SourceFile | null>(null)
-
-  // Refs
-  const markRef = useRef<Mark | null>(null)
 
   // Server state
   const { data: project, isLoading: isProjectLoading } = useQuery({
@@ -90,14 +86,6 @@ function RouteComponent() {
 
     return () => eventSource.close()
   }, [projectId])
-
-  useEffect(() => {
-    if (!markRef.current) markRef.current = new Mark('.logs')
-    if (search) {
-      markRef.current.unmark()
-      markRef.current.mark(search)
-    }
-  }, [search, logs?.length])
 
   // Helpers
   const sourceFiles = useMemo(() => {
@@ -180,16 +168,13 @@ function RouteComponent() {
         logs={filteredLogs}
         onChangeSearch={setSearch}
         filteredLogsCount={filteredLogs.length}
-        onClearSearch={() => {
-          markRef.current?.unmark()
-        }}
         sourceFiles={sourceFiles}
         selectedSourceFile={selectedSourceFile}
         onChangeSourceFile={setSelectedSourceFile}
       />
 
       {logs?.length ? (
-        <Logs data={filteredLogs} />
+        <Logs data={filteredLogs} search={search} />
       ) : (
         !isLogsLoading && <CodeExamples projectId={projectId} />
       )}
