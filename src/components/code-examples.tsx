@@ -4,7 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import { CurlExample } from './curl-example'
 import { TypeScriptSDKExample } from './typescript-sdk-example'
 import { PythonSDKExample } from './python-sdk-example'
-import { PythonIcon } from './icons'
+import { GoSDKExample } from './go-sdk-example'
+import { GoIcon, PythonIcon } from './icons'
 import type { Project } from 'generated/prisma/browser'
 
 type CodeExamplesProps = {
@@ -38,6 +39,10 @@ export function CodeExamples({ projectId }: CodeExamplesProps) {
                   <PythonIcon />
                   Python SDK
                 </TabsTrigger>
+                <TabsTrigger value="go">
+                  <GoIcon />
+                  Go SDK
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="curl">
                 <CurlExample projectId={projectId} />
@@ -50,6 +55,9 @@ export function CodeExamples({ projectId }: CodeExamplesProps) {
               </TabsContent>
               <TabsContent value="python" className="p-2 flex flex-col gap-4">
                 <PythonSDKExample projectId={projectId} />
+              </TabsContent>
+              <TabsContent value="go" className="p-2 flex flex-col gap-4">
+                <GoSDKExample projectId={projectId} />
               </TabsContent>
             </Tabs>
           </CardContent>
