@@ -9,6 +9,7 @@ const highlighterPromise = createHighlighterCore({
     import('@shikijs/langs/javascript'),
     import('@shikijs/langs/shell'),
     import('@shikijs/langs/json'),
+    import('@shikijs/langs/python'),
   ],
   engine: createJavaScriptRegexEngine(),
 })

@@ -3,6 +3,8 @@ import { Card, CardContent } from './ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import { CurlExample } from './curl-example'
 import { TypeScriptSDKExample } from './typescript-sdk-example'
+import { PythonSDKExample } from './python-sdk-example'
+import { PythonIcon } from './icons'
 import type { Project } from 'generated/prisma/browser'
 
 type CodeExamplesProps = {
@@ -29,8 +31,12 @@ export function CodeExamples({ projectId }: CodeExamplesProps) {
                   cURL
                 </TabsTrigger>
                 <TabsTrigger value="typescript">
-                  <RiJavascriptFill />
+                  <RiJavascriptFill className="text-yellow-400" />
                   JavaScript SDK
+                </TabsTrigger>
+                <TabsTrigger value="python">
+                  <PythonIcon />
+                  Python SDK
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="curl">
@@ -41,6 +47,9 @@ export function CodeExamples({ projectId }: CodeExamplesProps) {
                 className="p-2 flex flex-col gap-4"
               >
                 <TypeScriptSDKExample projectId={projectId} />
+              </TabsContent>
+              <TabsContent value="python" className="p-2 flex flex-col gap-4">
+                <PythonSDKExample projectId={projectId} />
               </TabsContent>
             </Tabs>
           </CardContent>
