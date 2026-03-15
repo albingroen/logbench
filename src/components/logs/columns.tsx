@@ -27,7 +27,6 @@ export const columns: Array<ColumnDef<Log>> = [
     cell: ({ row }) => {
       return (
         <LogContentInline
-          logId={row.original.id}
           level={row.original.level}
           content={row.original.content}
         />

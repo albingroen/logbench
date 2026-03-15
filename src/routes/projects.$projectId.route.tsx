@@ -1,5 +1,5 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { RiArrowRightLine, RiBox1Line } from '@remixicon/react'
 import Mark from 'mark.js'
@@ -32,6 +32,8 @@ function RouteComponent() {
   const [selectedSourceFile, setSelectedSourceFile] =
     useState<SourceFile | null>(null)
 
+  const deferredSearch = useDeferredValue(search)
+
   // Refs
   const markRef = useRef<Mark | null>(null)
 
@@ -41,10 +43,7 @@ function RouteComponent() {
     queryFn: () => getProjectFn({ data: { projectId } }),
   })
 
-  const logsQueryKey = useMemo(
-    () => ['projects', projectId, 'logs'],
-    [projectId],
-  )
+  const logsQueryKey = ['projects', projectId, 'logs']
 
   const queryClient = useQueryClient()
 
@@ -93,11 +92,11 @@ function RouteComponent() {
 
   useEffect(() => {
     if (!markRef.current) markRef.current = new Mark('.logs')
-    if (search) {
+    if (deferredSearch) {
       markRef.current.unmark()
-      markRef.current.mark(search)
+      markRef.current.mark(deferredSearch)
     }
-  }, [search, logs?.length])
+  }, [deferredSearch, logs?.length])
 
   // Helpers
   const sourceFiles = useMemo(() => {
@@ -122,11 +121,11 @@ function RouteComponent() {
   )
 
   const filteredLogs = useMemo(() => {
-    const lcSearch = search.toLowerCase()
+    const lcSearch = deferredSearch.toLowerCase()
 
     return (
       logs?.filter((log) => {
-        const matchesSearch = search
+        const matchesSearch = deferredSearch
           ? log.id.toLowerCase().includes(lcSearch) ||
             log.projectId?.toLowerCase().includes(lcSearch) ||
             log.level.toLowerCase().includes(lcSearch) ||
@@ -142,7 +141,7 @@ function RouteComponent() {
         return matchesSearch && matchesSourceFile
       }) ?? []
     )
-  }, [logs, search, selectedSourceFile])
+  }, [logs, deferredSearch, selectedSourceFile])
 
   if (isProjectLoading) {
     return null
@@ -179,7 +178,6 @@ function RouteComponent() {
         project={project}
         logs={filteredLogs}
         onChangeSearch={setSearch}
-        filteredLogsCount={filteredLogs.length}
         onClearSearch={() => {
           markRef.current?.unmark()
         }}

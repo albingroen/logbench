@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { LogLevel } from 'generated/prisma/enums'
 import {
   RiAlertFill,
@@ -38,7 +39,9 @@ export const LogLevelMetadata: Record<
   },
 }
 
-export function LogLevelBadge({ level }: LogLevelBadgeProps) {
+export const LogLevelBadge = memo(function LogLevelBadge({
+  level,
+}: LogLevelBadgeProps) {
   const { icon: Icon, variant, label } = LogLevelMetadata[level]
 
   return (
@@ -47,4 +50,4 @@ export function LogLevelBadge({ level }: LogLevelBadgeProps) {
       <span>{label}</span>
     </Badge>
   )
-}
+})

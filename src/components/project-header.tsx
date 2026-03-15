@@ -44,7 +44,6 @@ type ProjectHeaderProps = {
   logs: Array<Log>
   onChangeSearch: (value: string) => void
   onClearSearch: () => void
-  filteredLogsCount: number
   project: Project
   search: string
   sourceFiles: Array<SourceFile>
@@ -53,7 +52,6 @@ type ProjectHeaderProps = {
 }
 
 export function ProjectHeader({
-  filteredLogsCount,
   logs,
   onChangeSearch,
   onClearSearch,
@@ -138,7 +136,7 @@ export function ProjectHeader({
 
           <InputGroupAddon align="inline-end">
             <InputGroupText>
-              {filteredLogsCount.toLocaleString()} log(s)
+              {logs.length.toLocaleString()} log(s)
             </InputGroupText>
           </InputGroupAddon>
 

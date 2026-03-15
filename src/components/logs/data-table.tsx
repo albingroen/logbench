@@ -3,10 +3,11 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useMatch, useNavigate } from '@tanstack/react-router'
 import { RiBookmarkFill, RiBookmarkLine } from '@remixicon/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { memo } from 'react'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -32,13 +33,17 @@ interface DataTableProps<TData, TValue> {
   data: Array<TData>
 }
 
-export function DataTable<TData, TValue>({
+export const DataTable = memo(function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData & Log, TValue>) {
   // Router state
   const navigate = useNavigate()
-  const location = useLocation()
+  const logMatch = useMatch({
+    from: '/projects/$projectId/logs/$logId',
+    shouldThrow: false,
+  })
+  const activeLogId = logMatch?.params.logId ?? null
 
   // Local state
   const table = useReactTable({
@@ -107,81 +112,69 @@ export function DataTable<TData, TValue>({
         ))}
       </TableHeader>
       <TableBody className="logs">
-        {table.getRowModel().rows.map((row) => (
-          <ContextMenu key={row.id}>
-            <ContextMenuTrigger asChild>
-              <TableRow
-                role="button"
-                data-state={
-                  row.getIsSelected()
-                    ? 'selected'
-                    : row.original.isBookmarked
-                      ? 'bookmarked'
-                      : undefined
-                }
-                data-active={location.pathname.includes(row.original.id)}
-                onClick={() => openLog(row)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    openLog(row)
+        {table.getRowModel().rows.map((row) => {
+          const isBookmarked = row.original.isBookmarked
+
+          return (
+            <ContextMenu key={row.id}>
+              <ContextMenuTrigger asChild>
+                <TableRow
+                  role="button"
+                  className="cursor-pointer [content-visibility:auto] [contain-intrinsic-size:0_48px]"
+                  data-state={
+                    row.getIsSelected()
+                      ? 'selected'
+                      : isBookmarked
+                        ? 'bookmarked'
+                        : undefined
                   }
-                }}
-              >
-                {row.getVisibleCells().map((cell, i) => (
-                  <TableCell
-                    key={cell.id}
-                    className={
-                      ['w-52 text-muted-foreground', 'w-20', 'w-auto'][i]
+                  data-active={row.original.id === activeLogId}
+                  onClick={() => openLog(row)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      openLog(row)
                     }
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </ContextMenuTrigger>
-            <ContextMenuContent>
-              {row.original.isBookmarked ? (
+                  }}
+                >
+                  {row.getVisibleCells().map((cell, i) => (
+                    <TableCell
+                      key={cell.id}
+                      className={
+                        ['w-52 text-muted-foreground', 'w-20', 'w-auto'][i]
+                      }
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </ContextMenuTrigger>
+              <ContextMenuContent>
                 <ContextMenuItem
                   onSelect={() => {
-                    if (!row.original.projectId) {
-                      return
-                    }
+                    if (!row.original.projectId) return
 
                     updateLog({
                       logId: row.original.id,
-                      body: {
-                        isBookmarked: false,
-                      },
+                      body: { isBookmarked: !isBookmarked },
                     })
                   }}
                 >
-                  <RiBookmarkFill className="text-warning" />
-                  Unmark
+                  {isBookmarked ? (
+                    <RiBookmarkFill className="text-warning" />
+                  ) : (
+                    <RiBookmarkLine />
+                  )}
+                  {isBookmarked ? 'Unmark' : 'Bookmark'}
                 </ContextMenuItem>
-              ) : (
-                <ContextMenuItem
-                  onSelect={() => {
-                    if (!row.original.projectId) {
-                      return
-                    }
-
-                    updateLog({
-                      logId: row.original.id,
-                      body: {
-                        isBookmarked: true,
-                      },
-                    })
-                  }}
-                >
-                  <RiBookmarkLine />
-                  Bookmark
-                </ContextMenuItem>
-              )}
-            </ContextMenuContent>
-          </ContextMenu>
-        ))}
+              </ContextMenuContent>
+            </ContextMenu>
+          )
+        })}
       </TableBody>
     </Table>
   )
-}
+})

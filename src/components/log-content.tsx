@@ -1,6 +1,6 @@
 import { TreeView, VisualJson } from '@visual-json/react'
 import { LogLevel } from 'generated/prisma/browser'
-import { useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import {
   RiArrowDownSLine,
   RiClipboardLine,
@@ -48,16 +48,19 @@ const ideIntegrations = [
   },
 ]
 
-type LogContentProps = {
+type LogContentInlineProps = {
   content: Log['content']
   level: Log['level']
+}
+
+type LogContentBlockProps = LogContentInlineProps & {
   logId: Log['id']
 }
 
-export function LogContentInline({
+export const LogContentInline = memo(function LogContentInline({
   content: rawContent,
   level,
-}: LogContentProps) {
+}: LogContentInlineProps) {
   const content = renderLogContent(rawContent)
 
   return (
@@ -74,12 +77,12 @@ export function LogContentInline({
       {content}
     </span>
   )
-}
+})
 
 export function LogContentBlock({
   logId,
   content: rawContent,
-}: LogContentProps) {
+}: LogContentBlockProps) {
   // Helpers
   const content = renderLogContent(rawContent, false)
   const isContentObject = isObject(content)
