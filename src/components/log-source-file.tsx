@@ -16,7 +16,7 @@ export function LogSourceFile({ sourceFile, lineCol }: LogSourceFileProps) {
         extension={extension}
         className="size-3.5 text-dim-foreground"
       />
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5 flex-1">
         <span className="text-sm leading-none">
           {baseName}
           {lineCol ? `:${lineCol}` : ''}

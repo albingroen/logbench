@@ -1,5 +1,5 @@
 import { RiFile2Fill, RiJavascriptFill, RiReactjsLine } from '@remixicon/react'
-import { TypescriptIcon } from './icons'
+import { PythonIcon, TypescriptIcon } from './icons'
 import type { ComponentType } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -11,6 +11,7 @@ const EXTENSION_CONFIG: Record<
   jsx: { icon: RiReactjsLine, color: 'text-yellow-400' },
   ts: { icon: TypescriptIcon, color: 'text-blue-500' },
   tsx: { icon: RiReactjsLine, color: 'text-blue-400' },
+  py: { icon: PythonIcon, color: '' },
 }
 
 type FileIconProps = {
