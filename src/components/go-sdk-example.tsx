@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { RiExternalLinkLine } from '@remixicon/react'
+import { useTheme } from 'next-themes'
 import type { Project } from 'generated/prisma/browser'
 import { highlightCode } from '@/lib/shiki'
 
@@ -11,6 +12,8 @@ type GoSDKExampleProps = {
 const GO_INSTALL_COMMAND = 'go get github.com/albingroen/logbench-go'
 
 export function GoSDKExample({ projectId }: GoSDKExampleProps) {
+  const { systemTheme } = useTheme()
+
   const goSnippet = useMemo(
     () =>
       `package main
@@ -29,22 +32,22 @@ func main() {
   )
 
   const { data: goInstallSnippet } = useQuery({
-    queryKey: ['projects', projectId, 'examples', 'go', 'install'],
+    queryKey: ['projects', projectId, 'examples', 'go', 'install', systemTheme],
     queryFn: async () => {
-      const html = await highlightCode(GO_INSTALL_COMMAND, 'shell')
+      const html = await highlightCode(GO_INSTALL_COMMAND, 'shell', systemTheme)
 
       return html
     },
   })
 
   const { data: goExample } = useQuery({
-    queryKey: ['projects', projectId, 'examples', 'go', goSnippet],
+    queryKey: ['projects', projectId, 'examples', 'go', goSnippet, systemTheme],
     queryFn: async () => {
       if (!goSnippet) {
         return
       }
 
-      const html = await highlightCode(goSnippet, 'go')
+      const html = await highlightCode(goSnippet, 'go', systemTheme)
 
       return html
     },

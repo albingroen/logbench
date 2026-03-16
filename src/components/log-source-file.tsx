@@ -22,7 +22,7 @@ export function LogSourceFile({ sourceFile, lineCol }: LogSourceFileProps) {
           {lineCol ? `:${lineCol}` : ''}
         </span>
         {dirName && (
-          <span className="text-xs text-dim-foreground leading-none">
+          <span className="text-xs text-dim-foreground leading-snug">
             {dirName}
           </span>
         )}

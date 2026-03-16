@@ -1,6 +1,7 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+import { ThemeProvider } from 'next-themes'
 import appCss from '../styles.css?url'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
@@ -53,20 +54,21 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          <TooltipProvider delayDuration={700}>
-            <SidebarProvider>
-              <ProjectProvider>
-                <AppSidebar />
-                <SidebarInset>{children}</SidebarInset>
-              </ProjectProvider>
-              <Toaster
-                richColors
-                theme="dark"
-                closeButton={false}
-                position="bottom-right"
-              />
-            </SidebarProvider>
-          </TooltipProvider>
+          <ThemeProvider>
+            <TooltipProvider delayDuration={700}>
+              <SidebarProvider>
+                <ProjectProvider>
+                  <AppSidebar />
+                  <SidebarInset>{children}</SidebarInset>
+                </ProjectProvider>
+                <Toaster
+                  richColors
+                  closeButton={false}
+                  position="bottom-right"
+                />
+              </SidebarProvider>
+            </TooltipProvider>
+          </ThemeProvider>
         </QueryClientProvider>
         <Scripts />
       </body>

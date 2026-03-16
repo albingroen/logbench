@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { useTheme } from 'next-themes'
 import { Button } from './ui/button'
 import type { Project } from 'generated/prisma/browser'
 import { copyWithToast } from '@/lib/clipboard'
@@ -10,6 +11,8 @@ type CurlExampleProps = {
 }
 
 export function CurlExample({ projectId }: CurlExampleProps) {
+  const { systemTheme } = useTheme()
+
   // Helpers
   const curlCommand = useMemo(
     () =>
@@ -26,13 +29,20 @@ export function CurlExample({ projectId }: CurlExampleProps) {
   )
 
   const { data: curlExample } = useQuery({
-    queryKey: ['projects', projectId, 'examples', 'curl', curlCommand],
+    queryKey: [
+      'projects',
+      projectId,
+      'examples',
+      'curl',
+      curlCommand,
+      systemTheme,
+    ],
     queryFn: async () => {
       if (!curlCommand) {
         return
       }
 
-      const html = highlightCode(curlCommand, 'shell')
+      const html = await highlightCode(curlCommand, 'shell', systemTheme)
 
       return html
     },

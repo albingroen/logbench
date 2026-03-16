@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { RiExternalLinkLine } from '@remixicon/react'
+import { useTheme } from 'next-themes'
 import type { Project } from 'generated/prisma/browser'
 import { highlightCode } from '@/lib/shiki'
 
@@ -11,6 +12,8 @@ type PythonSDKExampleProps = {
 const UV_INSTALL_COMMAND = 'uv add logbench'
 
 export function PythonSDKExample({ projectId }: PythonSDKExampleProps) {
+  const { systemTheme } = useTheme()
+
   const pythonSnippet = useMemo(
     () =>
       `from logbench import Logbench
@@ -24,22 +27,36 @@ logger.err("Failed to connect to database")`,
   )
 
   const { data: pythonInstallSnippet } = useQuery({
-    queryKey: ['projects', projectId, 'examples', 'python', 'install'],
+    queryKey: [
+      'projects',
+      projectId,
+      'examples',
+      'python',
+      'install',
+      systemTheme,
+    ],
     queryFn: async () => {
-      const html = await highlightCode(UV_INSTALL_COMMAND, 'shell')
+      const html = await highlightCode(UV_INSTALL_COMMAND, 'shell', systemTheme)
 
       return html
     },
   })
 
   const { data: pythonExample } = useQuery({
-    queryKey: ['projects', projectId, 'examples', 'python', pythonSnippet],
+    queryKey: [
+      'projects',
+      projectId,
+      'examples',
+      'python',
+      pythonSnippet,
+      systemTheme,
+    ],
     queryFn: async () => {
       if (!pythonSnippet) {
         return
       }
 
-      const html = await highlightCode(pythonSnippet, 'python')
+      const html = await highlightCode(pythonSnippet, 'python', systemTheme)
 
       return html
     },

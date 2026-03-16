@@ -9,6 +9,7 @@ import {
   RiOpenaiFill,
 } from '@remixicon/react'
 import { useQuery } from '@tanstack/react-query'
+import { useTheme } from 'next-themes'
 import { Switch } from './ui/switch'
 import { Field, FieldLabel } from './ui/field'
 import { Button } from './ui/button'
@@ -83,6 +84,8 @@ export function LogContentBlock({
   logId,
   content: rawContent,
 }: LogContentBlockProps) {
+  const { systemTheme } = useTheme()
+
   // Helpers
   const content = renderLogContent(rawContent, false)
   const isContentObject = isObject(content)
@@ -99,7 +102,7 @@ export function LogContentBlock({
   const { data: highlightedContent, isLoading: isHighlightedCodeLoading } =
     useQuery({
       queryKey: [logId, 'raw'],
-      queryFn: () => highlightCode(stringifiedContent, 'json'),
+      queryFn: () => highlightCode(stringifiedContent, 'json', systemTheme),
       enabled: isContentObject,
     })
 

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { RiExternalLinkLine } from '@remixicon/react'
+import { useTheme } from 'next-themes'
 import type { Project } from 'generated/prisma/browser'
 import { highlightCode } from '@/lib/shiki'
 
@@ -11,6 +12,8 @@ type TypeScriptSDKExampleProps = {
 const BUN_INSTALL_COMMAND = 'bun add -D logbench-js'
 
 export function TypeScriptSDKExample({ projectId }: TypeScriptSDKExampleProps) {
+  const { systemTheme } = useTheme()
+
   // Helpers
   const typeScriptSnippet = useMemo(
     () =>
@@ -27,9 +30,20 @@ logger.err("Failed to connect to database");`,
   )
 
   const { data: typeScriptInstallSnippet } = useQuery({
-    queryKey: ['projects', projectId, 'examples', 'typeScript', 'install'],
+    queryKey: [
+      'projects',
+      projectId,
+      'examples',
+      'typeScript',
+      'install',
+      systemTheme,
+    ],
     queryFn: async () => {
-      const html = await highlightCode(BUN_INSTALL_COMMAND, 'typescript')
+      const html = await highlightCode(
+        BUN_INSTALL_COMMAND,
+        'typescript',
+        systemTheme,
+      )
 
       return html
     },
@@ -42,13 +56,18 @@ logger.err("Failed to connect to database");`,
       'examples',
       'typeScript',
       typeScriptSnippet,
+      systemTheme,
     ],
     queryFn: async () => {
       if (!typeScriptSnippet) {
         return
       }
 
-      const html = await highlightCode(typeScriptSnippet, 'typescript')
+      const html = await highlightCode(
+        typeScriptSnippet,
+        'typescript',
+        systemTheme,
+      )
 
       return html
     },

@@ -43,8 +43,10 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
         }
 
         const { projectId } = params
+        let streamController: ReadableStreamDefaultController<Uint8Array>
         const stream = new ReadableStream<Uint8Array>({
           start(controller) {
+            streamController = controller
             let clients = subscribersByProject.get(projectId)
             if (!clients) {
               clients = new Set()
@@ -56,7 +58,7 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
           cancel() {
             const clients = subscribersByProject.get(projectId)
             if (!clients) return
-            clients.delete(controller)
+            clients.delete(streamController)
             if (clients.size === 0) subscribersByProject.delete(projectId)
           },
         })
