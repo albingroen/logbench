@@ -43,7 +43,7 @@ model LogSource {
   updatedAt    DateTime   @updatedAt
   log          Log        @relation(fields: [logId], references: [id], onDelete: Cascade)
   logId        String     @unique
-  sourceFile   SourceFile @relation(fields: [sourceFileId], references: [id])
+  sourceFile   SourceFile @relation(fields: [sourceFileId], references: [id], onDelete: Cascade)
   sourceFileId String
 }
 
