@@ -1,3 +1,4 @@
+import { RiInputMethodFill } from '@remixicon/react'
 import { LogContentInline } from '../log-content'
 import { LogLevelBadge } from '../log-level'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -11,7 +12,16 @@ export const columns: Array<ColumnDef<Log>> = [
     cell: ({ row }) => {
       const createdAt = row.getValue<Date>('createdAt')
 
-      return <span className="tabular-nums">{formatDateTime(createdAt)}</span>
+      return (
+        <div className="flex items-center gap-0.5">
+          <span className="tabular-nums truncate flex-1">
+            {formatDateTime(createdAt)}
+          </span>
+          {row.original.annotation && (
+            <RiInputMethodFill className="size-3.5 text-foreground" />
+          )}
+        </div>
+      )
     },
   },
   {
