@@ -58,6 +58,13 @@ function createMcpServer() {
         where: { projectId },
         orderBy: { createdAt: 'desc' },
         take: 100,
+        include: {
+          source: {
+            include: {
+              sourceFile: true,
+            },
+          },
+        },
       })
       return { content: [{ type: 'text', text: JSON.stringify(logs) }] }
     },
