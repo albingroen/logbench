@@ -102,9 +102,6 @@ function RouteComponent() {
                   Annotate
                   {log.annotation && <Badge className="size-1.25 ml-px p-0" />}
                 </TabsTrigger>
-                <TabsTrigger disabled value="metadata">
-                  Metadata
-                </TabsTrigger>
               </TabsList>
               <TabsContent value="content" className="flex-1 min-h-0">
                 <LogContentBlock
