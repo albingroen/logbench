@@ -22,8 +22,17 @@ export const logSchema = z.object({
   isBookmarked: z.boolean().default(false),
 })
 
-export function generateMarkdownLogContent(content: unknown) {
-  return `\`\`\`
+export function generateMarkdownLogContent(
+  content: unknown,
+  meta?: { fileName?: string; lineNumber?: number; date?: string },
+) {
+  const prefix = meta?.fileName
+    ? `Log output from the log on line ${meta.lineNumber} in @${meta.fileName} at ${meta.date}:\n\n`
+    : meta?.date
+      ? `Log output from the log at ${meta.date}:\n\n`
+      : ''
+
+  return `${prefix}\`\`\`
 ${JSON.stringify(content, null, 2)}
 \`\`\``
 }

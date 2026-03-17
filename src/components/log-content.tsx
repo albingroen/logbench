@@ -56,6 +56,7 @@ type LogContentInlineProps = {
 
 type LogContentBlockProps = LogContentInlineProps & {
   logId: Log['id']
+  meta?: { fileName?: string; lineNumber?: number; date?: string }
 }
 
 export const LogContentInline = memo(function LogContentInline({
@@ -83,6 +84,7 @@ export const LogContentInline = memo(function LogContentInline({
 export function LogContentBlock({
   logId,
   content: rawContent,
+  meta,
 }: LogContentBlockProps) {
   const { systemTheme } = useTheme()
 
@@ -129,7 +131,7 @@ export function LogContentBlock({
             <DropdownMenuContent className="min-w-48">
               <DropdownMenuItem
                 onSelect={() =>
-                  copyWithToast(generateMarkdownLogContent(content))
+                  copyWithToast(generateMarkdownLogContent(content, meta))
                 }
               >
                 <RiMarkdownFill />
@@ -140,7 +142,7 @@ export function LogContentBlock({
                   key={label}
                   onSelect={() => {
                     window.location.href = generateDeeplink(
-                      generateMarkdownLogContent(content),
+                      generateMarkdownLogContent(content, meta),
                     )
                   }}
                 >

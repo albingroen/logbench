@@ -108,6 +108,11 @@ function RouteComponent() {
                   logId={log.id}
                   level={log.level}
                   content={log.content}
+                  meta={{
+                    fileName: log.source?.sourceFile.fileName,
+                    lineNumber: log.source?.lineNumber,
+                    date: formatDateTime(log.createdAt),
+                  }}
                 />
               </TabsContent>
 
