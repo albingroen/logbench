@@ -13,6 +13,7 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "check": "prettier --write . && eslint --fix",
+    "check:ts": "tsc --noEmit",
     "knip": "knip"
   },
   "dependencies": {

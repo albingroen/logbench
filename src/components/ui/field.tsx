@@ -230,8 +230,5 @@ export {
   FieldError,
   FieldGroup,
   FieldLegend,
-  FieldSeparator,
   FieldSet,
-  FieldContent,
-  FieldTitle,
 }

@@ -21,7 +21,7 @@ import { copyWithToast } from '@/lib/clipboard'
 type ProjectDropdownProps = {
   children: ReactNode
   project: ProjectWithLogsCount | Project
-  align: 'start' | 'end'
+  align?: 'start' | 'end'
 }
 
 export function ProjectDropdown({
