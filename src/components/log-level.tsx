@@ -14,7 +14,7 @@ type LogLevelBadgeProps = {
   level: LogLevel
 }
 
-export const LogLevelMetadata: Record<
+const LogLevelMetadata: Record<
   LogLevel,
   {
     variant: VariantProps<typeof badgeVariants>['variant']

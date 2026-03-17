@@ -1,6 +1,6 @@
 import { toast } from 'sonner'
 
-export function copyToClipboard(value: string): Promise<any> {
+function copyToClipboard(value: string): Promise<any> {
   try {
     return navigator.clipboard.writeText(value)
   } catch {
