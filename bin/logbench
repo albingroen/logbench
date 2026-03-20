@@ -1,0 +1,25 @@
+#!/bin/bash
+set -euo pipefail
+
+LIBEXEC="$(cd "$(dirname "$0")/../libexec" && pwd)"
+
+# Data directory for persistent state
+LOGBENCH_DATA="${LOGBENCH_DATA:-${XDG_DATA_HOME:-$HOME/.local/share}/logbench}"
+export PORT="${LOGBENCH_PORT:-${PORT:-1447}}"
+export DATABASE_URL="${DATABASE_URL:-file:${LOGBENCH_DATA}/logbench.db}"
+
+mkdir -p "$LOGBENCH_DATA"
+
+# Initialize or migrate database schema if needed
+DB_FILE="${LOGBENCH_DATA}/logbench.db"
+VERSION_FILE="${LOGBENCH_DATA}/.schema-version"
+CURRENT_VERSION="$(cat "$LIBEXEC/.logbench-version" 2>/dev/null || echo "unknown")"
+
+if [ ! -f "$DB_FILE" ] || [ ! -f "$VERSION_FILE" ] || [ "$(cat "$VERSION_FILE")" != "$CURRENT_VERSION" ]; then
+  echo "logbench: initializing database at ${DB_FILE}..."
+  sqlite3 "$DB_FILE" < "$LIBEXEC/schema.sql"
+  echo "$CURRENT_VERSION" > "$VERSION_FILE"
+fi
+
+cd "$LIBEXEC"
+exec bun run .output/server/index.mjs

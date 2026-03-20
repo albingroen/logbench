@@ -14,7 +14,8 @@
     "format": "prettier --write .",
     "check": "prettier --write . && eslint --fix",
     "check:ts": "tsc --noEmit",
-    "knip": "knip"
+    "knip": "knip",
+    "db:schema": "bunx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > schema.sql"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
