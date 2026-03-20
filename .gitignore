@@ -16,3 +16,5 @@ dev.db
 /generated/prisma
 .claude
 clear-logs.ts
+
+.*.bun-build
