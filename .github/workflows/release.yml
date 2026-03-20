@@ -34,7 +34,7 @@ jobs:
           git add package.json
           git commit -m "${TAG}"
           git tag "$TAG"
-          git push --follow-tags
+          git push origin HEAD "$TAG"
 
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
