@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 
 const bodySchema = z.object({
   content: z.any(),
-  level: z.enum(['INFO', 'WARNING', 'ERROR']).optional(),
+  level: z.enum(['INFO', 'WARNING', 'ERROR', 'LOG']).optional(),
   isBookmarked: z.boolean().optional(),
   annotation: z.string().optional(),
   source: z

@@ -17,15 +17,18 @@ export function TypeScriptSDKExample({ projectId }: TypeScriptSDKExampleProps) {
   // Helpers
   const typeScriptSnippet = useMemo(
     () =>
-      `import { Logbench } from "logbench-js";
+      `import { Logbench } from "logbench-js"
 
-const logger = new Logbench({
-  projectId: import.meta.env.VITE_LOGBENCH_PROJECT_ID // → "${projectId}"
-});
+const logbench = new Logbench({
+  projectId: import.meta.env.VITE_LB_PROJ_ID // → "${projectId}"
+})
 
-logger.info("Server started on port 3000");
-logger.warn("Disk usage above 80%");
-logger.err("Failed to connect to database");`,
+logbench.setupGlobals()
+
+bench.log("Arbitrary message")
+bench.info("Server started on port 3000")
+bench.warn("Disk usage above 80%")
+bench.error("Failed to connect to database")`,
     [projectId],
   )
 

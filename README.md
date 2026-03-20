@@ -117,14 +117,15 @@ const logger = new Logbench({
 
 logger.info('Server started on port 3000')
 logger.warn('Disk usage above 80%')
-logger.err('Failed to connect to database')
+logger.error('Failed to connect to database')
+logger.log('Arbitrary message')
 ```
 
-The SDK provides three log-level methods: `info`, `warn`, and `err`. All methods accept any number of arguments of any type. Values are serialized with [superjson](https://github.com/flightcontrolhq/superjson), so types like `Date`, `Set`, `Map`, `BigInt`, and `RegExp` are preserved.
+The SDK provides four log-level methods: `info`, `warn`, `error`, and `log`. All methods accept any number of arguments of any type. Values are serialized with [superjson](https://github.com/flightcontrolhq/superjson), so types like `Date`, `Set`, `Map`, `BigInt`, and `RegExp` are preserved.
 
 ```typescript
 logger.info('User signed in', { userId: 'abc123', at: new Date() })
-logger.err('Request failed', {
+logger.error('Request failed', {
   status: 500,
   headers: new Map([['x-request-id', 'abc']]),
 })

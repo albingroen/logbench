@@ -4,6 +4,7 @@ import {
   RiAlertFill,
   RiErrorWarningFill,
   RiInformationFill,
+  RiTerminalBoxFill,
 } from '@remixicon/react'
 import { Badge } from './ui/badge'
 import type { badgeVariants } from './ui/badge'
@@ -36,6 +37,11 @@ const LogLevelMetadata: Record<
     icon: RiAlertFill,
     variant: 'warning',
     label: 'WARN',
+  },
+  [LogLevel.LOG]: {
+    icon: RiTerminalBoxFill,
+    variant: 'secondary',
+    label: 'LOG',
   },
 }
 

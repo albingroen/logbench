@@ -63,4 +63,5 @@ enum LogLevel {
   INFO
   ERROR
   WARNING
+  LOG
 }

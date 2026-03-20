@@ -73,6 +73,7 @@ export const LogContentInline = memo(function LogContentInline({
           [LogLevel.ERROR]: 'text-destructive',
           [LogLevel.WARNING]: 'text-warning',
           [LogLevel.INFO]: 'text-foreground',
+          [LogLevel.LOG]: 'text-muted-foreground',
         }[level],
       )}
     >
