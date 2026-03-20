@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" --generate-notes
+
+      - name: Update Homebrew tap
+        env:
+          TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          TARBALL_URL="https://github.com/${{ github.repository }}/archive/refs/tags/${TAG}.tar.gz"
+
+          # Download tarball and compute SHA256
+          curl -sL "$TARBALL_URL" -o source.tar.gz
+          SHA256=$(sha256sum source.tar.gz | awk '{print $1}')
+
+          # Clone the tap repo and update the formula
+          git clone "https://x-access-token:${TAP_TOKEN}@github.com/albingroen/homebrew-logbench.git" tap
+          cd tap
+
+          sed -i "s|url \".*\"|url \"${TARBALL_URL}\"|" Formula/logbench.rb
+          sed -i "s|sha256 \".*\"|sha256 \"${SHA256}\"|" Formula/logbench.rb
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/logbench.rb
+          git commit -m "logbench ${VERSION}"
+          git push

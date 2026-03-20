@@ -1,6 +1,6 @@
 {
   "name": "logbench",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Albin Groen",
   "description": " A local log drain for people tired of console.log",
   "type": "module",
@@ -14,7 +14,8 @@
     "format": "prettier --write .",
     "check": "prettier --write . && eslint --fix",
     "check:ts": "tsc --noEmit",
-    "knip": "knip"
+    "knip": "knip",
+    "release": "VERSION=$(node -p \"require('./package.json').version\") && git tag \"v${VERSION}\" && git push origin \"v${VERSION}\""
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
