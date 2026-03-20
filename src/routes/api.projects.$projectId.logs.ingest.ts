@@ -97,21 +97,44 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
           })
         }
 
-        const sourceFile = parsed.data.source
-          ? await prisma.sourceFile.upsert({
-              where: {
-                fileName_projectId: {
-                  fileName: parsed.data.source.fileName,
-                  projectId: params.projectId,
-                },
+        const project = await prisma.project.findUnique({
+          where: { id: params.projectId },
+        })
+
+        if (!project) {
+          return new Response(
+            JSON.stringify({ error: 'Project not found' }),
+            {
+              status: 404,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
               },
+            },
+          )
+        }
+
+        let sourceFile = null
+        if (parsed.data.source) {
+          const where = {
+            fileName_projectId: {
+              fileName: parsed.data.source.fileName,
+              projectId: params.projectId,
+            },
+          }
+          try {
+            sourceFile = await prisma.sourceFile.upsert({
+              where,
               create: {
                 fileName: parsed.data.source.fileName,
                 projectId: params.projectId,
               },
               update: {},
             })
-          : null
+          } catch {
+            sourceFile = await prisma.sourceFile.findUnique({ where })
+          }
+        }
 
         const log = await prisma.log.create({
           data: {
