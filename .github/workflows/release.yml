@@ -18,11 +18,13 @@ permissions:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
 
       - name: Bump version
         id: version
@@ -41,10 +43,40 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: bunx prisma generate
+
+      - name: Build
+        run: bun run build
+
+      - name: Package release tarball
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          ARCHIVE="logbench-${VERSION}-darwin-arm64"
+
+          mkdir -p "${ARCHIVE}/.output/server/node_modules/@libsql"
+          cp -r .output/* "${ARCHIVE}/.output/"
+          cp -r node_modules/@libsql/darwin-arm64 "${ARCHIVE}/.output/server/node_modules/@libsql/"
+
+          mkdir -p "${ARCHIVE}/prisma"
+          cp -r prisma/migrations "${ARCHIVE}/prisma/"
+
+          cp -r bin "${ARCHIVE}/"
+          echo "$VERSION" > "${ARCHIVE}/.logbench-version"
+
+          tar czf "${ARCHIVE}.tar.gz" "$ARCHIVE"
+          echo "ARCHIVE=${ARCHIVE}" >> "$GITHUB_ENV"
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ steps.version.outputs.tag }}" --generate-notes
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            "${ARCHIVE}.tar.gz" \
+            --generate-notes
 
       - name: Update Homebrew tap
         env:
@@ -52,16 +84,16 @@ jobs:
         run: |
           TAG="${{ steps.version.outputs.tag }}"
           VERSION="${{ steps.version.outputs.version }}"
-          TARBALL_URL="https://github.com/${{ github.repository }}/archive/refs/tags/${TAG}.tar.gz"
+          TARBALL_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/${ARCHIVE}.tar.gz"
 
-          curl -sL "$TARBALL_URL" -o source.tar.gz
-          SHA256=$(sha256sum source.tar.gz | awk '{print $1}')
+          SHA256=$(shasum -a 256 "${ARCHIVE}.tar.gz" | awk '{print $1}')
 
           git clone "https://x-access-token:${TAP_TOKEN}@github.com/albingroen/homebrew-logbench.git" tap
           cd tap
 
-          sed -i "s|url \".*\"|url \"${TARBALL_URL}\"|" Formula/logbench.rb
-          sed -i "s|sha256 \".*\"|sha256 \"${SHA256}\"|" Formula/logbench.rb
+          sed -i '' "s|version \".*\"|version \"${VERSION}\"|" Formula/logbench.rb
+          sed -i '' "s|url \".*\"|url \"${TARBALL_URL}\"|" Formula/logbench.rb
+          sed -i '' "s|sha256 \".*\"|sha256 \"${SHA256}\"|" Formula/logbench.rb
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
