@@ -1,6 +1,6 @@
 {
   "name": "logbench",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Albin Groen",
   "description": " A local log drain for people tired of console.log",
   "type": "module",
