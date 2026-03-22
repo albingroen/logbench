@@ -21,7 +21,7 @@ export function ProjectSearch({ value, onChange }: ProjectSearchProps) {
         </Label>
         <SidebarInput
           id="search"
-          placeholder="Search projects..."
+          placeholder="Find a project..."
           className="pl-8"
           type="search"
           value={value}
