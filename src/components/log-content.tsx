@@ -1,6 +1,6 @@
 import { TreeView, VisualJson } from '@visual-json/react'
 import { LogLevel } from 'generated/prisma/browser'
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo } from 'react'
 import {
   RiArrowDownSLine,
   RiClipboardLine,
@@ -8,7 +8,7 @@ import {
   RiMarkdownFill,
   RiOpenaiFill,
 } from '@remixicon/react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTheme } from 'next-themes'
 import { Switch } from './ui/switch'
 import { Field, FieldLabel } from './ui/field'
@@ -26,6 +26,10 @@ import { generateMarkdownLogContent, renderLogContent } from '@/lib/log'
 import { cn, isObject } from '@/lib/utils'
 import { copyWithToast } from '@/lib/clipboard'
 import { highlightCode } from '@/lib/shiki'
+import {
+  getUserSettings as getUserSettingsFn,
+  updateUserSettings as updateUserSettingsFn,
+} from '@/lib/server/user-settings'
 import { generateCursorDeeplink } from '@/lib/cursor'
 import { generateZedDeeplink } from '@/lib/zed'
 import { generateCodexDeeplink } from '@/lib/codex'
@@ -88,6 +92,7 @@ export function LogContentBlock({
   meta,
 }: LogContentBlockProps) {
   const { systemTheme } = useTheme()
+  const queryClient = useQueryClient()
 
   // Helpers
   const content = renderLogContent(rawContent, false)
@@ -98,8 +103,21 @@ export function LogContentBlock({
     [content, isContentObject],
   )
 
-  // Local state
-  const [isRaw, setIsRaw] = useState<boolean>(!isContentObject)
+  const { data: userSettings } = useQuery({
+    queryKey: ['userSettings'],
+    queryFn: () => getUserSettingsFn(),
+    staleTime: Infinity,
+  })
+
+  const { mutate: updateUserSettings } = useMutation({
+    mutationFn: (preferRawJSON: boolean) =>
+      updateUserSettingsFn({ data: { preferRawJSON } }),
+    onSuccess: (res) => {
+      queryClient.setQueryData(['userSettings'], res)
+    },
+  })
+
+  const isRaw = isContentObject ? (userSettings?.preferRawJSON ?? false) : true
 
   // Highlight state
   const { data: highlightedContent, isLoading: isHighlightedCodeLoading } =
@@ -159,7 +177,14 @@ export function LogContentBlock({
           <Field orientation="horizontal" className="w-fit">
             <FieldLabel>Raw</FieldLabel>
 
-            <Switch checked={isRaw} onCheckedChange={setIsRaw} />
+            <Switch
+              checked={isRaw}
+              onCheckedChange={(checked) => {
+                if (checked !== userSettings?.preferRawJSON) {
+                  updateUserSettings(checked)
+                }
+              }}
+            />
           </Field>
         )}
       </div>

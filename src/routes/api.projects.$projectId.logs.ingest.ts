@@ -102,16 +102,13 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
         })
 
         if (!project) {
-          return new Response(
-            JSON.stringify({ error: 'Project not found' }),
-            {
-              status: 404,
-              headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-              },
+          return new Response(JSON.stringify({ error: 'Project not found' }), {
+            status: 404,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
             },
-          )
+          })
         }
 
         let sourceFile = null

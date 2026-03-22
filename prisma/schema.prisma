@@ -59,6 +59,13 @@ model SourceFile {
   @@unique([fileName, projectId])
 }
 
+model UserSettings {
+  id            String   @id @unique @default(cuid())
+  preferRawJSON Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
 enum LogLevel {
   INFO
   ERROR
