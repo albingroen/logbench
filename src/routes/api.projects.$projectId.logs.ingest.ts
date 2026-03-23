@@ -19,6 +19,7 @@ const bodySchema = z.object({
 type Client = ReadableStreamDefaultController<Uint8Array>
 const subscribersByProject = new Map<string, Set<Client>>()
 const encoder = new TextEncoder()
+const HEARTBEAT = encoder.encode(': heartbeat\n\n')
 
 function publish(projectId: string, event: unknown) {
   const clients = subscribersByProject.get(projectId)
@@ -44,6 +45,7 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
 
         const { projectId } = params
         let streamController: ReadableStreamDefaultController<Uint8Array>
+        let heartbeatTimer: ReturnType<typeof setInterval>
         const stream = new ReadableStream<Uint8Array>({
           start(controller) {
             streamController = controller
@@ -54,8 +56,22 @@ export const Route = createFileRoute('/api/projects/$projectId/logs/ingest')({
             }
             clients.add(controller)
             controller.enqueue(encoder.encode(': connected\n\n'))
+
+            heartbeatTimer = setInterval(() => {
+              try {
+                controller.enqueue(HEARTBEAT)
+              } catch {
+                clearInterval(heartbeatTimer)
+                const subs = subscribersByProject.get(projectId)
+                if (subs) {
+                  subs.delete(controller)
+                  if (subs.size === 0) subscribersByProject.delete(projectId)
+                }
+              }
+            }, 5_000)
           },
           cancel() {
+            clearInterval(heartbeatTimer)
             const clients = subscribersByProject.get(projectId)
             if (!clients) return
             clients.delete(streamController)
