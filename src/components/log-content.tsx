@@ -122,7 +122,7 @@ export function LogContentBlock({
   // Highlight state
   const { data: highlightedContent, isLoading: isHighlightedCodeLoading } =
     useQuery({
-      queryKey: [logId, 'raw'],
+      queryKey: [logId, 'raw', systemTheme],
       queryFn: () => highlightCode(stringifiedContent, 'json', systemTheme),
       enabled: isContentObject,
     })
