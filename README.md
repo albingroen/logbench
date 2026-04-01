@@ -4,7 +4,7 @@
 
 What is this, you might ask? Well, it's an attempt to build a better console.log experience.
 
-This repo is the GUI. If you're looking for how to set up Logbench in your codebase, have a look at one of the bindings:
+This repo is the ingestion server and graphical user interface. If you're looking for how to set up Logbench in your codebase, have a look at one of the bindings:
 
 - [JavaScript/TypeScript SDK](https://github.com/albingroen/logbench-js)
 - [Python SDK (Beta)](https://github.com/albingroen/logbench-python)
