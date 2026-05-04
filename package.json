@@ -14,7 +14,10 @@
     "format": "prettier --write .",
     "check": "prettier --write . && eslint --fix",
     "check:ts": "tsc --noEmit",
-    "knip": "knip"
+    "knip": "knip",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "prepare": "bun run db:push && bun run db:generate"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
